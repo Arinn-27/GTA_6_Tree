@@ -34,6 +34,7 @@ export interface SaveSlotItem {
   chapterLabel: string;
   title: string;
   badge: SlotBadgeKind;
+  isAnchor?: boolean;
   whenToSave: string;
   whyItMatters: string;
   spoilerContext: string;
@@ -44,9 +45,9 @@ export type BranchPathFilter =
   | 'all'
   | 'clean-run'
   | 'chaos-run'
-  | 'rolling-backups';
+  | 'safety-loop';
 
-export type BranchLane = 'spine' | 'clean' | 'chaos' | 'workspace' | 'lock';
+export type BranchLane = 'spine' | 'clean' | 'chaos' | 'safety';
 
 export interface BranchNode {
   id: string;
@@ -56,30 +57,47 @@ export interface BranchNode {
   subtitle: string;
   chapter: ChapterNumber | 'all';
   lane: BranchLane;
-  gridCol: number;
+  isAnchor: boolean;
+  gridCol: 1 | 2;
   gridRow: number;
-  gridColSpan?: number;
   paths: BranchPathFilter[];
-  mobileBranchTag?: string;
+  mobileBranchTag: string;
   endingIds: EndingId[];
 }
 
+export interface SafetyRailNode {
+  id: string;
+  slotId: string;
+  label: string;
+  shortTitle: string;
+  subtitle: string;
+  ruleTag: string;
+  paths: BranchPathFilter[];
+}
+
+export interface EndingClusterNode {
+  id: 'route-a-endings' | 'route-b-endings';
+  title: string;
+  subtitle: string;
+  lane: 'clean' | 'chaos';
+  gridCol: 1 | 2;
+  gridRow: number;
+  endingIds: EndingId[];
+  paths: BranchPathFilter[];
+}
+
 export type EdgeRouteStyle =
-  | 'straight-h'
-  | 'row1-to-row2-elbow'
-  | 'chaos-arc'
-  | 'workspace-dash'
-  | 'lock-curve';
+  | 'vertical-trunk'
+  | 'fork-curve-right'
+  | 'fork-curve-long';
 
 export interface BranchEdge {
   id: string;
   from: string;
   to: string;
-  kind: BranchLane;
+  kind: 'spine' | 'clean' | 'chaos';
   routeStyle: EdgeRouteStyle;
-  label?: string;
   paths: BranchPathFilter[];
-  dashed?: boolean;
 }
 
 export type RelationshipRoute = 'route-a' | 'route-b';

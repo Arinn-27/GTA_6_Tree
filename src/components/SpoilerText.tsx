@@ -30,12 +30,12 @@ export function SpoilerText({
 
   if (revealed) {
     return (
-      <span className="inline-flex flex-wrap items-baseline gap-1.5 rounded-lg border border-amber-500/30 bg-amber-500/10 px-2.5 py-1 text-sm text-amber-100">
+      <span className="inline-flex flex-wrap items-baseline gap-2 rounded-xl border border-amber-400/30 bg-amber-500/[0.08] px-3 py-1.5 text-sm leading-relaxed text-amber-50">
         <span>{children}</span>
         <button
           type="button"
           onClick={() => setRevealed(false)}
-          className="inline-flex items-center gap-1 rounded px-1.5 py-0.5 text-xs font-medium text-amber-300 transition hover:bg-amber-500/20 hover:text-amber-100"
+          className="inline-flex items-center gap-1 rounded-md bg-amber-500/15 px-2 py-0.5 text-[11px] font-semibold text-amber-200 transition hover:bg-amber-500/25"
           title="Re-blur spoiler"
         >
           <EyeOff className="h-3 w-3" />
@@ -51,18 +51,18 @@ export function SpoilerText({
         type="button"
         onClick={() => setConfirmOpen(true)}
         aria-label={`Reveal hidden ${label.toLowerCase()}`}
-        className="group inline-flex min-w-0 max-w-full flex-wrap items-center gap-x-2 gap-y-1 rounded-lg border border-slate-700/80 bg-slate-900/90 px-2.5 py-1.5 text-left text-xs font-medium text-slate-300 transition hover:border-amber-400/60 hover:bg-slate-800/90 sm:flex-nowrap"
+        className="group inline-flex min-h-10 min-w-0 max-w-full flex-wrap items-center gap-x-2 gap-y-1 rounded-xl border border-white/[0.09] bg-white/[0.03] px-3 py-1.5 text-left text-xs font-medium text-slate-300 transition hover:border-amber-400/45 hover:bg-amber-500/[0.06] sm:flex-nowrap"
       >
-        <EyeOff className="h-3.5 w-3.5 shrink-0 text-amber-400 transition group-hover:scale-105" />
+        <EyeOff className="h-3.5 w-3.5 shrink-0 text-amber-400/90 transition group-hover:scale-105" />
         <span className="shrink-0 text-slate-200">{label}</span>
         <span
           aria-hidden="true"
-          className="min-w-0 max-w-full select-none truncate rounded bg-slate-800/80 px-1.5 py-0.5 text-slate-400 blur-[5px] pointer-events-none"
+          className="min-w-0 max-w-full select-none truncate rounded bg-white/[0.07] px-2 py-0.5 text-slate-400 blur-[5px] pointer-events-none"
         >
-          Hidden mission &amp; plot consequence details
+          Hidden mission &amp; plot details
         </span>
-        <span className="shrink-0 text-[11px] font-semibold text-amber-300 group-hover:text-amber-200">
-          Click to reveal
+        <span className="shrink-0 text-[11px] font-semibold text-amber-300/90 group-hover:text-amber-200">
+          Reveal
         </span>
       </button>
 
@@ -73,21 +73,21 @@ export function SpoilerText({
             role="dialog"
             aria-modal="true"
             aria-labelledby="spoiler-confirm-title"
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-md"
             onClick={() => setConfirmOpen(false)}
           >
             <div
-              className="w-full max-w-md rounded-2xl border border-amber-500/40 bg-surface-elevated p-5 shadow-2xl"
+              className="w-full max-w-md rounded-2xl border border-amber-400/35 bg-[#101626] p-6 shadow-2xl"
               onClick={(event) => event.stopPropagation()}
             >
-              <div className="flex items-start gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/15 text-amber-400">
+              <div className="flex items-start gap-3.5">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-amber-400/30 bg-amber-500/15 text-amber-300">
                   <AlertTriangle className="h-5 w-5" />
                 </div>
                 <div className="space-y-1.5">
                   <h3
                     id="spoiler-confirm-title"
-                    className="text-base font-semibold text-white"
+                    className="font-display text-base font-bold text-white"
                   >
                     Are you sure? This contains a story spoiler.
                   </h3>
@@ -99,11 +99,11 @@ export function SpoilerText({
                 </div>
               </div>
 
-              <div className="mt-5 flex flex-wrap items-center justify-end gap-2.5">
+              <div className="mt-6 flex flex-wrap items-center justify-end gap-2.5">
                 <button
                   type="button"
                   onClick={() => setConfirmOpen(false)}
-                  className="rounded-lg border border-slate-700 bg-slate-900 px-3.5 py-2 text-sm font-medium text-slate-200 transition hover:bg-slate-800"
+                  className="min-h-11 rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-medium text-slate-200 transition hover:bg-white/[0.08]"
                 >
                   Cancel
                 </button>
@@ -113,13 +113,13 @@ export function SpoilerText({
                     setConfirmOpen(false);
                     setRevealed(true);
                   }}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-amber-500 px-3.5 py-2 text-sm font-semibold text-slate-950 transition hover:bg-amber-400"
+                  className="inline-flex min-h-11 items-center gap-1.5 rounded-xl bg-amber-400 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-amber-300"
                 >
                   <Eye className="h-4 w-4" />
                   Reveal Spoiler
                 </button>
               </div>
-              <div className="mt-3 flex items-center gap-1.5 text-[11px] text-slate-400">
+              <div className="mt-4 flex items-center gap-1.5 border-t border-white/[0.07] pt-3 text-[11px] text-slate-400">
                 <ShieldAlert className="h-3.5 w-3.5 text-cyan-400" />
                 Spoiler reveal state is never saved to localStorage.
               </div>

@@ -1,10 +1,16 @@
 import { useEffect, useState } from 'react';
-import { Info, Shield, X } from 'lucide-react';
-import { ADSENSE_CONFIG } from '../config/site';
+import { ArrowLeftRight, Coffee, Info, Shield, X } from 'lucide-react';
+import { ADSENSE_CONFIG, SUPPORT_LABEL, SUPPORT_URL } from '../config/site';
+import type { AppTab } from '../types/tracker';
+
+interface FooterProps {
+  onSelectTab: (tab: AppTab) => void;
+  onOpenSync: () => void;
+}
 
 type FooterModalKind = 'privacy' | 'about' | null;
 
-export function Footer() {
+export function Footer({ onSelectTab, onOpenSync }: FooterProps) {
   const [modal, setModal] = useState<FooterModalKind>(null);
 
   useEffect(() => {
@@ -20,50 +26,163 @@ export function Footer() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [modal]);
 
+  const jumpToTab = (tab: AppTab) => {
+    onSelectTab(tab);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
-    <footer className="mt-10 border-t border-border-subtle bg-[#080b14] pb-10 pt-8">
-      <div className="mx-auto max-w-6xl space-y-6 px-3 sm:px-6">
-        {/* Non-intrusive, CLS-safe AdSense placeholder */}
+    <footer className="mt-16 border-t border-white/[0.08] bg-[#06080f] pb-12 pt-10">
+      <div className="mx-auto max-w-6xl space-y-10 px-4 sm:px-6">
+        {/* Subtle, CLS-safe AdSense placement */}
         <div
           aria-label="Advertisement slot placeholder"
           data-ad-client={ADSENSE_CONFIG.publisherIdPlaceholder}
           data-ad-slot={ADSENSE_CONFIG.slotIdPlaceholder}
-          className="flex min-h-[100px] items-center justify-center rounded-xl border border-dashed border-slate-700/80 bg-surface/60 px-4 py-3 text-center sm:min-h-[90px]"
+          className="flex min-h-[100px] items-center justify-center rounded-xl border border-white/[0.06] bg-white/[0.015] px-4 py-3 text-center sm:min-h-[90px]"
         >
-          <div className="space-y-1">
-            <p className="text-[11px] font-semibold uppercase tracking-widest text-slate-400">
-              {ADSENSE_CONFIG.slotLabel}
+          <div className="space-y-0.5">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-500">
+              Sponsored Placement · AdSense Ready
             </p>
-            <p className="text-xs text-slate-500">
-              Reserved responsive footer placement (no layout shift, zero popups)
+            <p className="text-xs text-slate-600">
+              Non-intrusive reserved footer slot — zero popups, zero layout shift
             </p>
           </div>
         </div>
 
-        <div className="flex flex-col items-start justify-between gap-4 border-t border-border-subtle/70 pt-6 text-xs text-slate-400 sm:flex-row sm:items-center">
-          <p className="max-w-2xl leading-relaxed">
-            Unofficial fan-made save planning tool. Not affiliated with,
-            endorsed by, or connected to Rockstar Games or Take-Two Interactive.
-            Contains zero copyrighted game logos, artwork, or map tiles.
-          </p>
+        {/* Multi-column Website Footer */}
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-12">
+          {/* Brand Column */}
+          <div className="space-y-3 lg:col-span-5">
+            <div className="flex items-center gap-2.5">
+              <span
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-gradient-to-br from-cyan-500/20 via-slate-900 to-rose-500/20"
+                aria-hidden="true"
+              >
+                <svg
+                  viewBox="0 0 32 32"
+                  className="h-4 w-4"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M6 16h8l6-7h6M14 16l6 7h6"
+                    stroke="#22d3ee"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <circle cx="6" cy="16" r="2.6" fill="#22d3ee" />
+                  <circle cx="26" cy="9" r="2.6" fill="#34d399" />
+                  <circle cx="26" cy="23" r="2.6" fill="#fb7185" />
+                </svg>
+              </span>
+              <span className="font-display text-base font-bold text-white">
+                ViceBranch
+              </span>
+            </div>
+            <p className="max-w-sm text-xs leading-relaxed text-slate-400">
+              A spoiler-free 15-slot save planner and deterministic 8-ending
+              branch navigator built to keep your campaign organized without
+              ruining story moments.
+            </p>
+            <div className="pt-1">
+              <a
+                href={SUPPORT_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-10 items-center gap-1.5 rounded-lg border border-rose-400/25 bg-rose-500/10 px-3 py-1.5 text-xs font-semibold text-rose-200 transition hover:border-rose-400/50 hover:bg-rose-500/20"
+              >
+                <Coffee className="h-3.5 w-3.5 text-rose-300" />
+                {SUPPORT_LABEL}
+              </a>
+            </div>
+          </div>
 
-          <div className="flex shrink-0 items-center gap-3">
-            <button
-              type="button"
-              onClick={() => setModal('privacy')}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-800 bg-surface px-3 py-1.5 font-medium text-slate-300 transition hover:border-slate-700 hover:text-white"
-            >
-              <Shield className="h-3.5 w-3.5 text-cyan-400" />
-              Privacy Policy
-            </button>
-            <button
-              type="button"
-              onClick={() => setModal('about')}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-slate-800 bg-surface px-3 py-1.5 font-medium text-slate-300 transition hover:border-slate-700 hover:text-white"
-            >
-              <Info className="h-3.5 w-3.5 text-cyan-400" />
-              About
-            </button>
+          {/* Navigation Column */}
+          <div className="space-y-3 lg:col-span-3">
+            <h3 className="font-display text-xs font-bold uppercase tracking-wider text-slate-300">
+              Tools &amp; Guides
+            </h3>
+            <ul className="space-y-2 text-xs text-slate-400">
+              <li>
+                <button
+                  type="button"
+                  onClick={() => jumpToTab('save-tracker')}
+                  className="transition hover:text-cyan-200"
+                >
+                  15-Slot Save Tracker
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => jumpToTab('branch-tree')}
+                  className="transition hover:text-cyan-200"
+                >
+                  Anchor &amp; Branch Tree
+                </button>
+              </li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => jumpToTab('ending-nav')}
+                  className="transition hover:text-cyan-200"
+                >
+                  8-Ending Simulator
+                </button>
+              </li>
+              <li>
+                <a href="#guide" className="transition hover:text-cyan-200">
+                  Core Mechanics Handbook
+                </a>
+              </li>
+              <li>
+                <a href="#faq" className="transition hover:text-cyan-200">
+                  Frequently Asked Questions
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Resources & Legal Column */}
+          <div className="space-y-3 lg:col-span-4">
+            <h3 className="font-display text-xs font-bold uppercase tracking-wider text-slate-300">
+              Privacy &amp; Backup
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={onOpenSync}
+                className="inline-flex min-h-10 items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs font-medium text-slate-300 transition hover:border-cyan-400/40 hover:text-white"
+              >
+                <ArrowLeftRight className="h-3.5 w-3.5 text-cyan-400" />
+                Sync / Backup
+              </button>
+              <button
+                type="button"
+                onClick={() => setModal('privacy')}
+                className="inline-flex min-h-10 items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs font-medium text-slate-300 transition hover:border-white/25 hover:text-white"
+              >
+                <Shield className="h-3.5 w-3.5 text-cyan-400" />
+                Privacy Policy
+              </button>
+              <button
+                type="button"
+                onClick={() => setModal('about')}
+                className="inline-flex min-h-10 items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs font-medium text-slate-300 transition hover:border-white/25 hover:text-white"
+              >
+                <Info className="h-3.5 w-3.5 text-cyan-400" />
+                About
+              </button>
+            </div>
+            <p className="text-[11px] leading-relaxed text-slate-500">
+              Unofficial fan-made save planning tool. Not affiliated with,
+              endorsed by, or connected to Rockstar Games or Take-Two
+              Interactive. Contains zero copyrighted game logos, artwork, or map
+              tiles.
+            </p>
           </div>
         </div>
       </div>
@@ -73,17 +192,17 @@ export function Footer() {
           role="dialog"
           aria-modal="true"
           aria-labelledby="footer-modal-title"
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-md"
           onClick={() => setModal(null)}
         >
           <div
-            className="w-full max-w-lg rounded-2xl border border-border-subtle bg-surface-elevated p-5 shadow-2xl sm:p-6"
+            className="w-full max-w-lg rounded-2xl border border-white/15 bg-[#101626] p-6 shadow-2xl"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="flex items-start justify-between gap-3">
               <h2
                 id="footer-modal-title"
-                className="text-lg font-bold text-white"
+                className="font-display text-lg font-bold text-white"
               >
                 {modal === 'privacy'
                   ? 'Privacy Policy'
@@ -93,7 +212,7 @@ export function Footer() {
                 type="button"
                 onClick={() => setModal(null)}
                 aria-label="Close modal"
-                className="rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-800 hover:text-white"
+                className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-lg text-slate-400 transition hover:bg-white/[0.06] hover:text-white"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -106,7 +225,7 @@ export function Footer() {
                   This application runs 100% client-side as a static site. Your
                   checked save slots, completed endings, and current chapter are
                   stored exclusively in your browser&apos;s{' '}
-                  <code className="rounded bg-slate-900 px-1.5 py-0.5 text-xs text-cyan-300">
+                  <code className="rounded bg-canvas px-1.5 py-0.5 text-xs text-cyan-300">
                     localStorage
                   </code>
                   . We do not collect, transmit, or store personal data on any
@@ -119,18 +238,19 @@ export function Footer() {
                 </p>
                 <p>
                   <strong className="text-white">Advertising Notice:</strong>{' '}
-                  If Google AdSense is enabled on the deployed domain, third-party
-                  ad scripts may use cookies or local identifiers in accordance
-                  with Google&apos;s advertising policies to serve non-intrusive
-                  footer ads.
+                  If Google AdSense is enabled on the deployed domain,
+                  third-party ad scripts may use cookies or local identifiers in
+                  accordance with Google&apos;s advertising policies to serve
+                  non-intrusive footer ads.
                 </p>
               </div>
             ) : (
               <div className="mt-4 space-y-3 text-sm leading-relaxed text-slate-300">
                 <p>
-                  The <strong className="text-white">GTA 6 15-Slot Save Tracker &amp; Ending Branch Navigator</strong>{' '}
-                  is built to help players explore all 8 confirmed endings in a
-                  single campaign without story spoilers or accidental autosave
+                  <strong className="text-white">ViceBranch</strong> is a
+                  spoiler-free GTA 6 15-slot save tracker and ending branch
+                  navigator built to help players explore all 8 confirmed
+                  endings in a single campaign without accidental autosave
                   losses.
                 </p>
                 <p>
@@ -149,11 +269,11 @@ export function Footer() {
               </div>
             )}
 
-            <div className="mt-5 flex justify-end">
+            <div className="mt-6 flex justify-end">
               <button
                 type="button"
                 onClick={() => setModal(null)}
-                className="rounded-lg bg-cyan-500 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400"
+                className="min-h-11 rounded-xl bg-white px-5 py-2 text-sm font-semibold text-slate-950 transition hover:bg-cyan-100"
               >
                 Close
               </button>

@@ -37,6 +37,7 @@ export const SAVE_SLOTS: readonly SaveSlotItem[] = [
     chapterLabel: 'Chapter 1',
     title: 'Prologue Complete / Free Roam Baseline',
     badge: 'Spine',
+    isAnchor: true,
     whenToSave:
       'Create this permanent anchor the moment manual saving unlocks in free roam after finishing the opening prologue.',
     whyItMatters:
@@ -88,6 +89,7 @@ export const SAVE_SLOTS: readonly SaveSlotItem[] = [
     chapterLabel: 'Chapter 2',
     title: 'Chapter 2 Mid-Act Relationship & De-escalation Fork',
     badge: 'Spine',
+    isAnchor: true,
     whenToSave:
       'Save midway through Chapter 2 before multi-option missions where you can defuse conflicts or escalate into firefights.',
     whyItMatters:
@@ -122,6 +124,7 @@ export const SAVE_SLOTS: readonly SaveSlotItem[] = [
     chapterLabel: 'Chapter 3',
     title: 'Chapter 3 Mid-Game Profile Anchor (Chaos Fork #1)',
     badge: 'Chaos Fork',
+    isAnchor: true,
     whenToSave:
       'Save midway through Chapter 3 before major heist preparations and spare-or-eliminate syndicate decisions.',
     whyItMatters:
@@ -156,6 +159,7 @@ export const SAVE_SLOTS: readonly SaveSlotItem[] = [
     chapterLabel: 'Chapter 5',
     title: 'Chapter 5 Pre-Finale Master Split',
     badge: 'Point of No Return',
+    isAnchor: true,
     whenToSave:
       'Save in free roam immediately before starting the pivotal late-Chapter 5 confrontation that splits the finale.',
     whyItMatters:
@@ -173,13 +177,14 @@ export const SAVE_SLOTS: readonly SaveSlotItem[] = [
     chapterLabel: 'Chapter 5',
     title: 'Clean Run Finale Lock (8 → 9)',
     badge: 'Clean Fork',
+    isAnchor: true,
     whenToSave:
       'Fork from Slot 8 once you have verified a Clean (Professional) profile, target Relationship Route, and desired Family Savings.',
     whyItMatters:
-      'Lets you cleanly replay Step 2–4 finale choices for the Best ($2M+) and Good endings without risking accidental profile drift.',
+      'Lets you cleanly replay Route A finale choices (e1, e2, e4, e5, e8) without risking accidental profile drift.',
     spoilerContext:
-      'Optimized for e1 (Route A + $2M+ + Shoot + Swim + Exit), e2 (Route A under $2M), and e3 (Route B + Clean + Take Deal, with $500K+ bonus epilogue).',
-    recommendedEndings: ['e1', 'e2', 'e3', 'e5', 'e8'],
+      'Optimized for Route A outcomes: e1 ($2M+ Clean Swim Exit), e2 (Under $2M Clean Swim Exit), e4, e5, and e8.',
+    recommendedEndings: ['e1', 'e2', 'e4', 'e5', 'e8'],
   },
   {
     id: 'slot-10',
@@ -191,12 +196,12 @@ export const SAVE_SLOTS: readonly SaveSlotItem[] = [
     title: 'Chaos Run Finale Branch (6 or 8 → 10)',
     badge: 'Chaos Fork',
     whenToSave:
-      'Fork from Slot 6 or Slot 8 into Slot 10 when you are ready to intentionally lower your profile or test high-chaos finale paths.',
+      'Fork from Slot 6 or Slot 8 into Slot 10 when you are ready to explore Route B endings or test Chaos / alternate-profile paths.',
     whyItMatters:
       'Quarantines Psycho/Shattered profile shifts and Route B standoff experiments away from your Clean Run save.',
     spoilerContext:
-      'Dedicated branch for e4 (Chaos profile or Expire on Route A Swim), e6 (Route B Stay Down), and e7 (Route B Defend).',
-    recommendedEndings: ['e4', 'e6', 'e7'],
+      'Dedicated branch for Route B endings: e3 (Good B), e6 (Stay Down), and e7 (Defend).',
+    recommendedEndings: ['e3', 'e6', 'e7'],
   },
   {
     id: 'slots-11-14',
@@ -233,6 +238,10 @@ export const SAVE_SLOTS: readonly SaveSlotItem[] = [
     recommendedEndings: ['e1', 'e2', 'e3', 'e4', 'e5', 'e6', 'e7', 'e8'],
   },
 ];
+
+export const ANCHOR_SLOT_IDS: ReadonlySet<string> = new Set(
+  SAVE_SLOTS.filter((slot) => slot.isAnchor).map((slot) => slot.id)
+);
 
 export const VALID_SLOT_IDS: ReadonlySet<string> = new Set(
   SAVE_SLOTS.map((slot) => slot.id)

@@ -44,20 +44,30 @@ type EndingFilter =
 function tierBadgeClass(tier: EndingTier): string {
   switch (tier) {
     case 'best':
-      return 'border-emerald-400/50 bg-emerald-500/20 text-emerald-200';
+      return 'border-emerald-400/45 bg-emerald-500/15 text-emerald-200';
     case 'good':
-      return 'border-cyan-400/50 bg-cyan-500/15 text-cyan-200';
+      return 'border-cyan-400/45 bg-cyan-500/15 text-cyan-200';
     case 'bad':
-      return 'border-rose-400/50 bg-rose-500/15 text-rose-200';
+      return 'border-rose-400/45 bg-rose-500/15 text-rose-200';
     case 'worst':
-      return 'border-red-500/60 bg-red-950/60 text-red-200';
+      return 'border-red-400/55 bg-red-950/60 text-red-200';
   }
 }
 
-const STEP3_LABELS: Record<
-  Step3Choice,
-  { label: string; hint: string }
-> = {
+function tierAccentBarClass(tier: EndingTier): string {
+  switch (tier) {
+    case 'best':
+      return 'from-emerald-400 via-teal-300 to-cyan-400';
+    case 'good':
+      return 'from-cyan-400 to-sky-300';
+    case 'bad':
+      return 'from-amber-400 to-rose-500';
+    case 'worst':
+      return 'from-rose-500 to-red-600';
+  }
+}
+
+const STEP3_LABELS: Record<Step3Choice, { label: string; hint: string }> = {
   swim: { label: 'Swim', hint: 'Bail out and attempt the water escape' },
   'no-surrender': {
     label: 'No Surrender',
@@ -94,7 +104,11 @@ export function EndingNavTab({
 
   const updateRoute = (route: RelationshipRoute) => {
     const nextBase: EndingSimulationInput = { ...simulatorInput, route };
-    const probe = resolveEnding({ ...nextBase, step3: undefined, step4: undefined });
+    const probe = resolveEnding({
+      ...nextBase,
+      step3: undefined,
+      step4: undefined,
+    });
     const validStep3 =
       simulatorInput.step3 &&
       probe.availableStep3Choices.includes(simulatorInput.step3)
@@ -114,7 +128,11 @@ export function EndingNavTab({
 
   const updateProfile = (profile: CriminalProfile) => {
     const nextBase: EndingSimulationInput = { ...simulatorInput, profile };
-    const probe = resolveEnding({ ...nextBase, step3: undefined, step4: undefined });
+    const probe = resolveEnding({
+      ...nextBase,
+      step3: undefined,
+      step4: undefined,
+    });
     const validStep3 =
       simulatorInput.step3 &&
       probe.availableStep3Choices.includes(simulatorInput.step3)
@@ -138,7 +156,11 @@ export function EndingNavTab({
 
   const updateStep2 = (step2: Step2Choice) => {
     const nextBase: EndingSimulationInput = { ...simulatorInput, step2 };
-    const probe = resolveEnding({ ...nextBase, step3: undefined, step4: undefined });
+    const probe = resolveEnding({
+      ...nextBase,
+      step3: undefined,
+      step4: undefined,
+    });
     const validStep3 =
       simulatorInput.step3 &&
       probe.availableStep3Choices.includes(simulatorInput.step3)
@@ -218,51 +240,54 @@ export function EndingNavTab({
     : undefined;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-12">
       {/* Constrained Branch Simulator */}
       <section
         id="branch-simulator-panel"
         aria-labelledby="simulator-heading"
-        className="rounded-2xl border border-border-subtle bg-surface p-4 sm:p-6"
+        className="space-y-6"
       >
-        <div className="flex flex-wrap items-start justify-between gap-3 border-b border-border-subtle pb-4">
+        <div className="flex flex-wrap items-end justify-between gap-4 border-b border-white/[0.08] pb-4">
           <div>
             <div className="flex items-center gap-2">
               <Compass className="h-5 w-5 text-cyan-400" />
               <h2
                 id="simulator-heading"
-                className="text-lg font-bold text-white sm:text-xl"
+                className="font-display text-xl font-bold tracking-tight text-white sm:text-2xl"
               >
                 Walk Down a Branch Simulator
               </h2>
             </div>
-            <p className="mt-1 text-xs text-slate-400 sm:text-sm">
-              Select your Step 1 world state and Step 2–4 finale choices.
-              Unavailable branches are constrained automatically.
+            <p className="mt-1 text-xs leading-relaxed text-slate-400 sm:text-sm">
+              Choose your campaign world state and finale decisions. Unavailable
+              downstream steps constrain automatically.
             </p>
           </div>
 
           <button
             type="button"
             onClick={resetSimulator}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 bg-canvas px-3 py-1.5 text-xs font-semibold text-slate-300 transition hover:border-cyan-400/60 hover:text-white"
+            className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-2 text-xs font-semibold text-slate-200 transition hover:border-cyan-400/50 hover:bg-white/[0.08]"
           >
-            <RotateCcw className="h-3.5 w-3.5" />
+            <RotateCcw className="h-3.5 w-3.5 text-cyan-400" />
             Reset to Best Path
           </button>
         </div>
 
-        <div className="mt-5 grid gap-6 lg:grid-cols-12">
-          {/* Steps 1-4 Inputs */}
-          <div className="min-w-0 space-y-5 lg:col-span-7">
+        <div className="grid items-start gap-6 lg:grid-cols-12">
+          {/* Steps 1-4 Controls */}
+          <div className="min-w-0 space-y-4 lg:col-span-7">
             {/* Step 1 */}
-            <div className="space-y-3 rounded-xl border border-border-subtle bg-surface-elevated/70 p-4">
-              <div className="text-xs font-bold uppercase tracking-wider text-cyan-300">
-                Step 1 · Campaign World State
+            <div className="surface-card space-y-4 rounded-2xl border border-white/[0.08] p-5">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-cyan-300">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-cyan-500/15 font-mono text-[11px] text-cyan-200">
+                  1
+                </span>
+                Campaign World State
               </div>
 
-              <div className="space-y-1.5">
-                <div className="text-xs font-semibold text-slate-300">
+              <div className="space-y-2">
+                <div className="text-xs font-medium text-slate-400">
                   Relationship Route
                 </div>
                 <div className="grid grid-cols-2 gap-2">
@@ -271,26 +296,40 @@ export function EndingNavTab({
                       ['route-a', 'Route A (High Bond)'],
                       ['route-b', 'Route B (Strained)'],
                     ] as const
-                  ).map(([value, label]) => (
-                    <button
-                      key={value}
-                      type="button"
-                      aria-pressed={simulatorInput.route === value}
-                      onClick={() => updateRoute(value)}
-                      className={`rounded-lg px-3 py-2 text-xs font-semibold transition ${
-                        simulatorInput.route === value
-                          ? 'bg-cyan-500 text-slate-950'
-                          : 'border border-slate-700 bg-canvas text-slate-300 hover:border-slate-500'
-                      }`}
-                    >
-                      {label}
-                    </button>
-                  ))}
+                  ).map(([value, label]) => {
+                    const active = simulatorInput.route === value;
+                    return (
+                      <button
+                        key={value}
+                        type="button"
+                        aria-pressed={active}
+                        onClick={() => updateRoute(value)}
+                        className={`flex min-h-11 items-center justify-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold transition ${
+                          active
+                            ? value === 'route-a'
+                              ? 'border-cyan-400/70 bg-cyan-500/15 text-cyan-100 shadow-[0_0_20px_-8px_rgba(34,211,238,0.65)]'
+                              : 'border-rose-400/70 bg-gradient-to-r from-amber-500/18 to-rose-500/18 text-rose-100 shadow-[0_0_20px_-8px_rgba(251,113,133,0.6)]'
+                            : 'border-white/[0.08] bg-canvas/70 text-slate-400 hover:border-white/20 hover:text-slate-200'
+                        }`}
+                      >
+                        <span
+                          className={`h-2 w-2 shrink-0 rounded-full ${
+                            active
+                              ? value === 'route-a'
+                                ? 'bg-cyan-400'
+                                : 'bg-rose-400'
+                              : 'bg-slate-600'
+                          }`}
+                        />
+                        <span>{label}</span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
-              <div className="space-y-1.5">
-                <div className="text-xs font-semibold text-slate-300">
+              <div className="space-y-2">
+                <div className="text-xs font-medium text-slate-400">
                   Criminal Profile
                 </div>
                 <div className="grid grid-cols-2 gap-2">
@@ -299,28 +338,40 @@ export function EndingNavTab({
                       ['clean', 'Clean (Professional)'],
                       ['chaos', 'Chaos (Psycho / Shattered)'],
                     ] as const
-                  ).map(([value, label]) => (
-                    <button
-                      key={value}
-                      type="button"
-                      aria-pressed={simulatorInput.profile === value}
-                      onClick={() => updateProfile(value)}
-                      className={`rounded-lg px-3 py-2 text-xs font-semibold transition ${
-                        simulatorInput.profile === value
-                          ? value === 'clean'
-                            ? 'bg-emerald-500 text-slate-950'
-                            : 'bg-rose-500 text-white'
-                          : 'border border-slate-700 bg-canvas text-slate-300 hover:border-slate-500'
-                      }`}
-                    >
-                      {label}
-                    </button>
-                  ))}
+                  ).map(([value, label]) => {
+                    const active = simulatorInput.profile === value;
+                    return (
+                      <button
+                        key={value}
+                        type="button"
+                        aria-pressed={active}
+                        onClick={() => updateProfile(value)}
+                        className={`flex min-h-11 items-center justify-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold transition ${
+                          active
+                            ? value === 'clean'
+                              ? 'border-emerald-400/70 bg-emerald-500/15 text-emerald-100 shadow-[0_0_20px_-8px_rgba(52,211,153,0.65)]'
+                              : 'border-rose-400/70 bg-rose-500/15 text-rose-100 shadow-[0_0_20px_-8px_rgba(251,113,133,0.65)]'
+                            : 'border-white/[0.08] bg-canvas/70 text-slate-400 hover:border-white/20 hover:text-slate-200'
+                        }`}
+                      >
+                        <span
+                          className={`h-2 w-2 shrink-0 rounded-full ${
+                            active
+                              ? value === 'clean'
+                                ? 'bg-emerald-400'
+                                : 'bg-rose-400'
+                              : 'bg-slate-600'
+                          }`}
+                        />
+                        <span>{label}</span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
-              <div className="space-y-1.5">
-                <div className="text-xs font-semibold text-slate-300">
+              <div className="space-y-2">
+                <div className="text-xs font-medium text-slate-400">
                   Family Savings
                 </div>
                 <div className="grid grid-cols-3 gap-2">
@@ -330,29 +381,35 @@ export function EndingNavTab({
                       ['500k-to-2m', '$500K – $1.99M'],
                       ['2m-plus', '$2M+'],
                     ] as const
-                  ).map(([value, label]) => (
-                    <button
-                      key={value}
-                      type="button"
-                      aria-pressed={simulatorInput.savings === value}
-                      onClick={() => updateSavings(value)}
-                      className={`rounded-lg px-2 py-2 text-xs font-semibold transition ${
-                        simulatorInput.savings === value
-                          ? 'bg-amber-400 text-slate-950'
-                          : 'border border-slate-700 bg-canvas text-slate-300 hover:border-slate-500'
-                      }`}
-                    >
-                      {label}
-                    </button>
-                  ))}
+                  ).map(([value, label]) => {
+                    const active = simulatorInput.savings === value;
+                    return (
+                      <button
+                        key={value}
+                        type="button"
+                        aria-pressed={active}
+                        onClick={() => updateSavings(value)}
+                        className={`min-h-11 rounded-xl border px-2 py-2 text-xs font-semibold tabular-nums transition ${
+                          active
+                            ? 'border-amber-400/70 bg-amber-500/15 text-amber-100 shadow-[0_0_20px_-8px_rgba(251,191,36,0.6)]'
+                            : 'border-white/[0.08] bg-canvas/70 text-slate-400 hover:border-white/20 hover:text-slate-200'
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             </div>
 
             {/* Step 2 */}
-            <div className="space-y-2.5 rounded-xl border border-border-subtle bg-surface-elevated/70 p-4">
-              <div className="text-xs font-bold uppercase tracking-wider text-cyan-300">
-                Step 2 · Pivotal Confrontation
+            <div className="surface-card space-y-3 rounded-2xl border border-white/[0.08] p-5">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-cyan-300">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-cyan-500/15 font-mono text-[11px] text-cyan-200">
+                  2
+                </span>
+                Pivotal Confrontation
               </div>
               <div className="grid grid-cols-2 gap-2">
                 {(
@@ -360,32 +417,43 @@ export function EndingNavTab({
                     ['shoot', 'Shoot'],
                     ['take-deal', 'Wait 15–60s (Take Deal)'],
                   ] as const
-                ).map(([value, label]) => (
-                  <button
-                    key={value}
-                    type="button"
-                    aria-pressed={simulatorInput.step2 === value}
-                    onClick={() => updateStep2(value)}
-                    className={`rounded-lg px-3 py-2 text-xs font-semibold transition ${
-                      simulatorInput.step2 === value
-                        ? 'bg-cyan-500 text-slate-950'
-                        : 'border border-slate-700 bg-canvas text-slate-300 hover:border-slate-500'
-                    }`}
-                  >
-                    {label}
-                  </button>
-                ))}
+                ).map(([value, label]) => {
+                  const active = simulatorInput.step2 === value;
+                  return (
+                    <button
+                      key={value}
+                      type="button"
+                      aria-pressed={active}
+                      onClick={() => updateStep2(value)}
+                      className={`flex min-h-11 items-center justify-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold transition ${
+                        active
+                          ? 'border-cyan-400/70 bg-cyan-500/15 text-cyan-100 shadow-[0_0_20px_-8px_rgba(34,211,238,0.6)]'
+                          : 'border-white/[0.08] bg-canvas/70 text-slate-400 hover:border-white/20 hover:text-slate-200'
+                      }`}
+                    >
+                      <span
+                        className={`h-2 w-2 shrink-0 rounded-full ${
+                          active ? 'bg-cyan-400' : 'bg-slate-600'
+                        }`}
+                      />
+                      <span>{label}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
             {/* Step 3 */}
-            <div className="space-y-2.5 rounded-xl border border-border-subtle bg-surface-elevated/70 p-4">
-              <div className="flex items-center justify-between">
-                <div className="text-xs font-bold uppercase tracking-wider text-cyan-300">
-                  Step 3 · Branch Decision
+            <div className="surface-card space-y-3 rounded-2xl border border-white/[0.08] p-5">
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-cyan-300">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-cyan-500/15 font-mono text-[11px] text-cyan-200">
+                    3
+                  </span>
+                  Branch Decision
                 </div>
                 {resolution.availableStep3Choices.length === 0 && (
-                  <span className="rounded bg-slate-800 px-2 py-0.5 text-[11px] font-semibold text-slate-300">
+                  <span className="rounded-full border border-white/10 bg-white/[0.05] px-2.5 py-0.5 text-[11px] font-semibold text-slate-300">
                     No Step 3
                   </span>
                 )}
@@ -402,16 +470,16 @@ export function EndingNavTab({
                         type="button"
                         aria-pressed={active}
                         onClick={() => updateStep3(choice)}
-                        className={`rounded-lg p-2.5 text-left transition ${
+                        className={`min-h-11 rounded-xl border p-3 text-left transition ${
                           active
-                            ? 'bg-cyan-500 text-slate-950'
-                            : 'border border-slate-700 bg-canvas text-slate-200 hover:border-slate-500'
+                            ? 'border-cyan-400/70 bg-cyan-500/15 text-white shadow-[0_0_20px_-8px_rgba(34,211,238,0.6)]'
+                            : 'border-white/[0.08] bg-canvas/70 text-slate-300 hover:border-white/20'
                         }`}
                       >
                         <div className="text-xs font-bold">{meta.label}</div>
                         <div
                           className={`mt-0.5 text-[11px] ${
-                            active ? 'text-slate-900' : 'text-slate-400'
+                            active ? 'text-cyan-100/80' : 'text-slate-400'
                           }`}
                         >
                           {meta.hint}
@@ -421,18 +489,21 @@ export function EndingNavTab({
                   })}
                 </div>
               ) : (
-                <p className="text-xs text-slate-400">
-                  This branch resolves immediately after Step 2 (no Step 3 prompt
-                  occurs).
+                <p className="text-xs leading-relaxed text-slate-400">
+                  This branch resolves immediately after Step 2—no Step 3 prompt
+                  occurs.
                 </p>
               )}
             </div>
 
             {/* Step 4 */}
             {resolution.requiresStep4 && (
-              <div className="space-y-2.5 rounded-xl border border-border-subtle bg-surface-elevated/70 p-4">
-                <div className="text-xs font-bold uppercase tracking-wider text-cyan-300">
-                  Step 4 · Final Escape Window
+              <div className="surface-card space-y-3 rounded-2xl border border-white/[0.08] p-5">
+                <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-cyan-300">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-cyan-500/15 font-mono text-[11px] text-cyan-200">
+                    4
+                  </span>
+                  Final Escape Window
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   {(
@@ -440,36 +511,53 @@ export function EndingNavTab({
                       ['exit', 'Exit (Clear Escape)'],
                       ['expire', 'Expire (Timer Runs Out)'],
                     ] as const
-                  ).map(([value, label]) => (
-                    <button
-                      key={value}
-                      type="button"
-                      aria-pressed={simulatorInput.step4 === value}
-                      onClick={() => updateStep4(value)}
-                      className={`rounded-lg px-3 py-2 text-xs font-semibold transition ${
-                        simulatorInput.step4 === value
-                          ? value === 'exit'
-                            ? 'bg-emerald-500 text-slate-950'
-                            : 'bg-rose-500 text-white'
-                          : 'border border-slate-700 bg-canvas text-slate-300 hover:border-slate-500'
-                      }`}
-                    >
-                      {label}
-                    </button>
-                  ))}
+                  ).map(([value, label]) => {
+                    const active = simulatorInput.step4 === value;
+                    return (
+                      <button
+                        key={value}
+                        type="button"
+                        aria-pressed={active}
+                        onClick={() => updateStep4(value)}
+                        className={`flex min-h-11 items-center justify-center gap-2 rounded-xl border px-3 py-2 text-xs font-semibold transition ${
+                          active
+                            ? value === 'exit'
+                              ? 'border-emerald-400/70 bg-emerald-500/15 text-emerald-100 shadow-[0_0_20px_-8px_rgba(52,211,153,0.6)]'
+                              : 'border-rose-400/70 bg-rose-500/15 text-rose-100 shadow-[0_0_20px_-8px_rgba(251,113,133,0.6)]'
+                            : 'border-white/[0.08] bg-canvas/70 text-slate-400 hover:border-white/20 hover:text-slate-200'
+                        }`}
+                      >
+                        <span
+                          className={`h-2 w-2 shrink-0 rounded-full ${
+                            active
+                              ? value === 'exit'
+                                ? 'bg-emerald-400'
+                                : 'bg-rose-400'
+                              : 'bg-slate-600'
+                          }`}
+                        />
+                        <span>{label}</span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             )}
           </div>
 
-          {/* Live Resolved Outcome Card */}
-          <div className="min-w-0 lg:col-span-5">
+          {/* Sticky, Properly-Sized Resolved Outcome Card (No Blank Bottom Void!) */}
+          <div className="min-w-0 lg:col-span-5 lg:sticky lg:top-20">
             {resolution.ending ? (
-              <div className="flex h-full flex-col justify-between rounded-2xl border border-cyan-500/40 bg-canvas/80 p-5">
-                <div className="space-y-4">
+              <div className="surface-card overflow-hidden rounded-2xl border border-white/[0.12]">
+                <div
+                  className={`h-1 w-full bg-gradient-to-r ${tierAccentBarClass(
+                    resolution.ending.tier
+                  )}`}
+                />
+                <div className="space-y-4 p-5 sm:p-6">
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="flex items-center gap-2">
-                      <span className="rounded-lg bg-slate-900 px-2.5 py-1 font-mono text-sm font-extrabold text-white ring-1 ring-slate-700">
+                      <span className="rounded-lg border border-white/15 bg-canvas px-2.5 py-1 font-mono text-sm font-extrabold tabular-nums text-white">
                         {resolution.ending.code}
                       </span>
                       <span
@@ -484,14 +572,17 @@ export function EndingNavTab({
                   </div>
 
                   <div>
-                    <h3 className="text-lg font-bold text-white">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                      Resolved Ending
+                    </p>
+                    <h3 className="mt-0.5 font-display text-2xl font-extrabold tracking-tight text-white">
                       {resolution.ending.name}
                     </h3>
-                    <div className="mt-2 flex flex-wrap gap-1.5">
+                    <div className="mt-3 flex flex-wrap gap-1.5">
                       {resolution.ending.recipeTags.map((tag) => (
                         <span
                           key={tag}
-                          className="rounded-md border border-slate-800 bg-surface px-2 py-0.5 text-[11px] font-medium text-slate-300"
+                          className="rounded-md border border-white/[0.08] bg-white/[0.03] px-2 py-0.5 text-[11px] font-medium text-slate-300"
                         >
                           {tag}
                         </span>
@@ -500,19 +591,19 @@ export function EndingNavTab({
                   </div>
 
                   {recommendedSlot && (
-                    <div className="flex items-center justify-between gap-2 rounded-xl border border-border-subtle bg-surface p-3 text-xs">
+                    <div className="flex items-center justify-between gap-2 rounded-xl border border-white/[0.08] bg-canvas/70 px-3.5 py-3 text-xs">
                       <div>
                         <span className="text-slate-400">
                           Recommended Save:{' '}
                         </span>
-                        <span className="font-mono font-bold text-cyan-300">
+                        <span className="font-mono font-bold tabular-nums text-cyan-200">
                           {recommendedSlot.slotLabel}
                         </span>
                       </div>
                       <button
                         type="button"
                         onClick={() => onViewSlotInTree(recommendedSlot.id)}
-                        className="font-semibold text-cyan-300 underline decoration-cyan-500/40 underline-offset-2 hover:text-cyan-200"
+                        className="font-semibold text-cyan-300 underline decoration-cyan-400/40 underline-offset-4 hover:text-cyan-200"
                       >
                         Show in Tree
                       </button>
@@ -520,59 +611,59 @@ export function EndingNavTab({
                   )}
 
                   {resolution.bonusEpilogueNote && (
-                    <div className="flex items-start gap-2 rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-3 text-xs text-emerald-200">
+                    <div className="flex items-start gap-2 rounded-xl border border-emerald-400/35 bg-emerald-500/10 p-3 text-xs leading-relaxed text-emerald-100">
                       <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
                       <span>{resolution.bonusEpilogueNote}</span>
                     </div>
                   )}
 
                   {resolution.warningNote && (
-                    <div className="flex items-start gap-2 rounded-xl border border-amber-500/40 bg-amber-500/10 p-3 text-xs text-amber-200">
+                    <div className="flex items-start gap-2 rounded-xl border border-amber-400/35 bg-amber-500/10 p-3 text-xs leading-relaxed text-amber-100">
                       <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
                       <span>{resolution.warningNote}</span>
                     </div>
                   )}
 
                   {resolution.verificationNote && (
-                    <div className="flex items-start gap-2 rounded-xl border border-amber-500/35 bg-amber-950/30 p-3 text-xs text-amber-200">
+                    <div className="flex items-start gap-2 rounded-xl border border-amber-400/30 bg-amber-950/30 p-3 text-xs leading-relaxed text-amber-100">
                       <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
                       <span>{resolution.verificationNote}</span>
                     </div>
                   )}
 
-                  <div>
+                  <div className="pt-1">
                     <SpoilerText label="Ending outcome summary">
                       {resolution.ending.spoilerSummary}
                     </SpoilerText>
                   </div>
-                </div>
 
-                <div className="mt-6 border-t border-border-subtle pt-4">
-                  <button
-                    type="button"
-                    onClick={() => onToggleEnding(resolution.ending!.id)}
-                    className={`flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold transition ${
-                      completedSet.has(resolution.ending.id)
-                        ? 'border border-emerald-500/50 bg-emerald-500/15 text-emerald-200'
-                        : 'bg-cyan-500 text-slate-950 hover:bg-cyan-400'
-                    }`}
-                  >
-                    {completedSet.has(resolution.ending.id) ? (
-                      <>
-                        <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-                        Marked as Completed ({resolution.ending.code})
-                      </>
-                    ) : (
-                      <>
-                        <Circle className="h-4 w-4" />
-                        Mark {resolution.ending.code} Completed
-                      </>
-                    )}
-                  </button>
+                  <div className="border-t border-white/[0.08] pt-4">
+                    <button
+                      type="button"
+                      onClick={() => onToggleEnding(resolution.ending!.id)}
+                      className={`flex min-h-11 w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold tabular-nums transition ${
+                        completedSet.has(resolution.ending.id)
+                          ? 'border border-emerald-400/50 bg-emerald-500/15 text-emerald-100'
+                          : 'bg-white text-slate-950 shadow-sm hover:bg-cyan-100'
+                      }`}
+                    >
+                      {completedSet.has(resolution.ending.id) ? (
+                        <>
+                          <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+                          Marked as Completed ({resolution.ending.code})
+                        </>
+                      ) : (
+                        <>
+                          <Circle className="h-4 w-4" />
+                          Mark {resolution.ending.code} Completed
+                        </>
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
             ) : (
-              <div className="flex h-full items-center justify-center rounded-2xl border border-dashed border-slate-700 bg-canvas/50 p-6 text-center text-sm text-slate-400">
+              <div className="surface-card rounded-2xl border border-dashed border-white/15 p-6 text-center text-sm text-slate-400">
                 Choose an option in {resolution.nextRequiredStep ?? 'the steps'}{' '}
                 to resolve an ending.
               </div>
@@ -582,24 +673,21 @@ export function EndingNavTab({
       </section>
 
       {/* All 8 Endings Filterable Checklist */}
-      <section
-        aria-labelledby="checklist-heading"
-        className="rounded-2xl border border-border-subtle bg-surface p-4 sm:p-6"
-      >
-        <div className="flex flex-col gap-4 border-b border-border-subtle pb-4 lg:flex-row lg:items-center lg:justify-between">
-          <div className="space-y-1.5">
+      <section aria-labelledby="checklist-heading" className="space-y-5">
+        <div className="flex flex-col gap-4 border-b border-white/[0.08] pb-4 lg:flex-row lg:items-end lg:justify-between">
+          <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2.5">
               <h2
                 id="checklist-heading"
-                className="text-lg font-bold text-white sm:text-xl"
+                className="font-display text-xl font-bold tracking-tight text-white sm:text-2xl"
               >
                 All 8 Confirmed Endings Checklist
               </h2>
-              <span className="rounded-full border border-emerald-500/40 bg-emerald-500/15 px-2.5 py-0.5 text-xs font-bold text-emerald-200">
+              <span className="rounded-full border border-emerald-400/35 bg-emerald-500/12 px-2.5 py-0.5 text-xs font-bold tabular-nums text-emerald-200">
                 {completedCount} / {ENDINGS.length} Completed
               </span>
             </div>
-            <div className="h-2 w-full max-w-sm overflow-hidden rounded-full bg-slate-900 ring-1 ring-slate-800">
+            <div className="h-2 w-full max-w-sm overflow-hidden rounded-full bg-white/[0.06]">
               <div
                 className="h-full rounded-full bg-gradient-to-r from-cyan-400 to-emerald-400 transition-all duration-300"
                 style={{ width: `${progressPct}%` }}
@@ -627,10 +715,10 @@ export function EndingNavTab({
                 type="button"
                 aria-pressed={filter === value}
                 onClick={() => setFilter(value)}
-                className={`rounded-lg px-2.5 py-1.5 text-xs font-semibold transition ${
+                className={`min-h-11 rounded-xl border px-3 py-2 text-xs font-semibold tabular-nums transition ${
                   filter === value
-                    ? 'bg-cyan-500 text-slate-950'
-                    : 'border border-slate-700 bg-canvas text-slate-300 hover:border-slate-500'
+                    ? 'border-cyan-400/70 bg-cyan-500/18 text-cyan-100'
+                    : 'border-white/10 bg-white/[0.03] text-slate-300 hover:border-white/25 hover:text-white'
                 }`}
               >
                 {label}
@@ -639,7 +727,7 @@ export function EndingNavTab({
           </div>
         </div>
 
-        <div className="mt-5 grid gap-4 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2">
           {filteredEndings.map((ending) => {
             const isCompleted = completedSet.has(ending.id);
             const slot = getSlotById(ending.recommendedSlotId);
@@ -647,52 +735,50 @@ export function EndingNavTab({
             return (
               <article
                 key={ending.id}
-                className={`flex min-w-0 flex-col justify-between rounded-xl border p-4 transition ${
+                className={`surface-card flex min-w-0 flex-col justify-between rounded-2xl border p-5 transition ${
                   isCompleted
-                    ? 'border-emerald-500/45 bg-emerald-950/15'
-                    : 'border-border-subtle bg-surface-elevated/70'
+                    ? 'border-emerald-400/40 bg-emerald-950/15'
+                    : 'border-white/[0.08] hover:border-white/[0.18]'
                 }`}
               >
-                <div className="space-y-3">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-start gap-2.5">
-                      <button
-                        type="button"
-                        role="checkbox"
-                        aria-checked={isCompleted}
-                        aria-label={`Mark ${ending.code} ${ending.name} completed`}
-                        onClick={() => onToggleEnding(ending.id)}
-                        className="mt-0.5 shrink-0 text-slate-400 transition hover:text-emerald-300"
-                      >
-                        {isCompleted ? (
-                          <CheckCircle2 className="h-6 w-6 text-emerald-400" />
-                        ) : (
-                          <Circle className="h-6 w-6 text-slate-500" />
-                        )}
-                      </button>
+                <div className="space-y-3.5">
+                  <div className="flex items-start gap-2.5">
+                    <button
+                      type="button"
+                      role="checkbox"
+                      aria-checked={isCompleted}
+                      aria-label={`Mark ${ending.code} ${ending.name} completed`}
+                      onClick={() => onToggleEnding(ending.id)}
+                      className="-ml-2 -mt-2 flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-full text-slate-400 transition hover:text-emerald-300"
+                    >
+                      {isCompleted ? (
+                        <CheckCircle2 className="h-6 w-6 text-emerald-400" />
+                      ) : (
+                        <Circle className="h-6 w-6 text-slate-500" />
+                      )}
+                    </button>
 
-                      <div>
-                        <div className="flex flex-wrap items-center gap-1.5">
-                          <span className="rounded bg-slate-900 px-2 py-0.5 font-mono text-xs font-bold text-white ring-1 ring-slate-700">
-                            {ending.code}
+                    <div>
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span className="rounded-md border border-white/15 bg-canvas px-2 py-0.5 font-mono text-xs font-bold tabular-nums text-white">
+                          {ending.code}
+                        </span>
+                        <span
+                          className={`rounded-md border px-2 py-0.5 text-[11px] font-bold ${tierBadgeClass(
+                            ending.tier
+                          )}`}
+                        >
+                          {ending.tierLabel}
+                        </span>
+                        {slot && (
+                          <span className="rounded-md bg-cyan-500/12 px-2 py-0.5 font-mono text-[11px] font-semibold tabular-nums text-cyan-200">
+                            {slot.slotLabel}
                           </span>
-                          <span
-                            className={`rounded border px-2 py-0.5 text-[11px] font-bold ${tierBadgeClass(
-                              ending.tier
-                            )}`}
-                          >
-                            {ending.tierLabel}
-                          </span>
-                          {slot && (
-                            <span className="rounded bg-cyan-500/10 px-2 py-0.5 font-mono text-[11px] font-semibold text-cyan-300">
-                              {slot.slotLabel}
-                            </span>
-                          )}
-                        </div>
-                        <h3 className="mt-1 text-sm font-bold text-white">
-                          {ending.name}
-                        </h3>
+                        )}
                       </div>
+                      <h3 className="mt-1.5 font-display text-base font-bold text-white">
+                        {ending.name}
+                      </h3>
                     </div>
                   </div>
 
@@ -700,7 +786,7 @@ export function EndingNavTab({
                     {ending.recipeTags.map((tag) => (
                       <span
                         key={tag}
-                        className="rounded border border-slate-800 bg-canvas px-2 py-0.5 text-[11px] text-slate-300"
+                        className="rounded-md border border-white/[0.07] bg-white/[0.03] px-2 py-0.5 text-[11px] text-slate-300"
                       >
                         {tag}
                       </span>
@@ -708,13 +794,13 @@ export function EndingNavTab({
                   </div>
 
                   {ending.bonusEpilogueNote && (
-                    <p className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1.5 text-[11px] text-emerald-200">
+                    <p className="rounded-xl border border-emerald-400/25 bg-emerald-500/10 px-3 py-2 text-xs text-emerald-100">
                       {ending.bonusEpilogueNote}
                     </p>
                   )}
 
                   {ending.launchWeekNote && (
-                    <p className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-2.5 py-1.5 text-[11px] text-amber-200">
+                    <p className="rounded-xl border border-amber-400/25 bg-amber-500/10 px-3 py-2 text-xs text-amber-100">
                       {ending.launchWeekNote}
                     </p>
                   )}
@@ -726,18 +812,18 @@ export function EndingNavTab({
                   </div>
                 </div>
 
-                <div className="mt-4 flex items-center justify-between gap-2 border-t border-border-subtle/60 pt-3">
+                <div className="mt-4 flex items-center justify-between gap-2 border-t border-white/[0.07] pt-3.5">
                   <button
                     type="button"
                     onClick={() => onViewSlotInTree(ending.recommendedSlotId)}
-                    className="text-xs font-medium text-slate-400 hover:text-cyan-200"
+                    className="min-h-11 text-xs font-medium tabular-nums text-slate-400 transition hover:text-cyan-200"
                   >
                     Inspect {slot?.slotLabel ?? 'Save Slot'}
                   </button>
                   <button
                     type="button"
                     onClick={() => loadEndingInSimulator(ending)}
-                    className="inline-flex items-center gap-1.5 rounded-lg border border-slate-700 bg-canvas px-3 py-1.5 text-xs font-semibold text-cyan-200 transition hover:border-cyan-400/60 hover:bg-cyan-500/10"
+                    className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-1.5 text-xs font-semibold text-cyan-200 transition hover:border-cyan-400/50 hover:bg-cyan-500/10"
                   >
                     <Play className="h-3 w-3 text-cyan-400" />
                     Simulate Path
@@ -749,7 +835,7 @@ export function EndingNavTab({
         </div>
 
         {filteredEndings.length === 0 && (
-          <div className="mt-6 rounded-xl border border-dashed border-slate-700 p-8 text-center text-sm text-slate-400">
+          <div className="surface-card rounded-2xl border border-dashed border-white/15 p-8 text-center text-sm text-slate-400">
             All endings matching this filter are already completed!
           </div>
         )}

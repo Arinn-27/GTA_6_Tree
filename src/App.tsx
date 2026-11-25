@@ -4,6 +4,7 @@ import { EndingNavTab } from './components/EndingNavTab';
 import { Footer } from './components/Footer';
 import { GuideSection } from './components/GuideSection';
 import { Header } from './components/Header';
+import { HeroBanner } from './components/HeroBanner';
 import { SaveTrackerTab } from './components/SaveTrackerTab';
 import { SyncModal } from './components/SyncModal';
 import { ENDINGS, getEndingById } from './data/endings';
@@ -40,18 +41,20 @@ export function App() {
   const handleViewSlotInTree = (slotId: string) => {
     setSelectedNodeId(slotId);
     setActiveTab('branch-tree');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const el = document.getElementById('workspace-root');
+    el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   const handleInspectEnding = (endingId: EndingId) => {
     const ending = getEndingById(endingId);
     setSimulatorInput({ ...ending.presetInput });
     setActiveTab('ending-nav');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const el = document.getElementById('workspace-root');
+    el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-canvas text-slate-100">
+    <div className="site-ambient-bg flex min-h-screen flex-col bg-canvas text-slate-100">
       <Header
         activeTab={activeTab}
         onSelectTab={setActiveTab}
@@ -62,7 +65,20 @@ export function App() {
         onOpenSync={() => setSyncOpen(true)}
       />
 
-      <main className="mx-auto w-full max-w-6xl flex-1 px-3 py-6 sm:px-6 sm:py-8">
+      <HeroBanner
+        activeTab={activeTab}
+        onSelectTab={setActiveTab}
+        checkedSlotsCount={state.checkedSlots.length}
+        totalCheckpoints={SAVE_SLOTS.length}
+        completedEndingsCount={state.completedEndings.length}
+        totalEndings={ENDINGS.length}
+        currentChapter={state.currentChapter}
+      />
+
+      <main
+        id="workspace-root"
+        className="mx-auto w-full max-w-6xl flex-1 scroll-mt-20 px-4 py-8 sm:px-6 sm:py-10"
+      >
         {activeTab === 'save-tracker' && (
           <SaveTrackerTab
             checkedSlots={state.checkedSlots}
@@ -76,6 +92,7 @@ export function App() {
         {activeTab === 'branch-tree' && (
           <BranchTreeTab
             checkedSlots={state.checkedSlots}
+            completedEndings={state.completedEndings}
             selectedNodeId={selectedNodeId}
             onSelectNode={setSelectedNodeId}
             onToggleSlot={toggleSlot}
@@ -96,7 +113,10 @@ export function App() {
         <GuideSection />
       </main>
 
-      <Footer />
+      <Footer
+        onSelectTab={setActiveTab}
+        onOpenSync={() => setSyncOpen(true)}
+      />
 
       <SyncModal
         open={syncOpen}
