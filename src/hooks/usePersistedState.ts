@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { STORAGE_KEY } from '../config/site';
 import { VALID_ENDING_IDS } from '../data/endings';
-import { VALID_SLOT_IDS } from '../data/saveSlots';
-import type { ChapterNumber, PersistedAppState } from '../types/tracker';
+import type { PersistedAppState } from '../types/tracker';
 import { DEFAULT_APP_STATE, validatePersistedState } from '../utils/syncCodec';
 
 function readInitialState(): PersistedAppState {
@@ -34,19 +33,6 @@ export function usePersistedState() {
     }
   }, [state]);
 
-  const toggleSlot = useCallback((slotId: string) => {
-    if (!VALID_SLOT_IDS.has(slotId)) {
-      return;
-    }
-    setState((prev) => {
-      const exists = prev.checkedSlots.includes(slotId);
-      const checkedSlots = exists
-        ? prev.checkedSlots.filter((id) => id !== slotId)
-        : [...prev.checkedSlots, slotId];
-      return { ...prev, checkedSlots };
-    });
-  }, []);
-
   const toggleEnding = useCallback((endingId: string) => {
     if (!VALID_ENDING_IDS.has(endingId)) {
       return;
@@ -58,12 +44,6 @@ export function usePersistedState() {
         : [...prev.completedEndings, endingId];
       return { ...prev, completedEndings };
     });
-  }, []);
-
-  const setCurrentChapter = useCallback((chapter: ChapterNumber) => {
-    setState((prev) =>
-      prev.currentChapter === chapter ? prev : { ...prev, currentChapter: chapter }
-    );
   }, []);
 
   const replaceState = useCallback((nextState: PersistedAppState) => {
@@ -79,9 +59,7 @@ export function usePersistedState() {
 
   return {
     state,
-    toggleSlot,
     toggleEnding,
-    setCurrentChapter,
     replaceState,
     resetState,
   };

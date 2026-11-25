@@ -51,7 +51,7 @@ export function SpoilerText({
         type="button"
         onClick={() => setConfirmOpen(true)}
         aria-label={`Reveal hidden ${label.toLowerCase()}`}
-        className="group inline-flex min-h-10 min-w-0 max-w-full flex-wrap items-center gap-x-2 gap-y-1 rounded-xl border border-white/[0.09] bg-white/[0.03] px-3 py-1.5 text-left text-xs font-medium text-slate-300 transition hover:border-amber-400/45 hover:bg-amber-500/[0.06] sm:flex-nowrap"
+        className="group inline-flex min-h-10 min-w-0 max-w-full flex-wrap items-center gap-x-2 gap-y-1 overflow-hidden rounded-xl border border-white/[0.09] bg-white/[0.03] px-3 py-1.5 text-left text-xs font-medium text-slate-300 transition hover:border-amber-400/45 hover:bg-amber-500/[0.06]"
       >
         <EyeOff className="h-3.5 w-3.5 shrink-0 text-amber-400/90 transition group-hover:scale-105" />
         <span className="shrink-0 text-slate-200">{label}</span>

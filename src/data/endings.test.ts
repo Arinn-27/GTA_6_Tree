@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { ENDINGS, resolveEnding } from './endings';
 
 describe('ENDINGS catalog', () => {
-  it('defines all 8 unique endings e1-e8', () => {
+  it('defines all 8 unique endings e1-e8 with explicit unlock steps', () => {
     expect(ENDINGS).toHaveLength(8);
     expect(ENDINGS.map((e) => e.id)).toEqual([
       'e1',
@@ -14,6 +14,15 @@ describe('ENDINGS catalog', () => {
       'e7',
       'e8',
     ]);
+
+    for (const ending of ENDINGS) {
+      expect(ending.unlockSteps.length).toBeGreaterThan(0);
+    }
+
+    const e6 = ENDINGS.find((e) => e.id === 'e6');
+    const e7 = ENDINGS.find((e) => e.id === 'e7');
+    expect(e6?.launchWeekNote).not.toMatch(/Slot\s+\d+/i);
+    expect(e7?.launchWeekNote).not.toMatch(/Slot\s+\d+/i);
   });
 
   it('has preset inputs that deterministically resolve to each ending itself', () => {

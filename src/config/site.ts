@@ -1,4 +1,4 @@
-export const STORAGE_KEY = 'gta6_branch_tracker_v1';
+export const STORAGE_KEY = 'gta6_story_tracker_v1';
 
 /**
  * Update this placeholder URL with your real Ko-fi or Buy Me a Coffee link before deploying.

@@ -1,103 +1,66 @@
-export type ChapterNumber = 1 | 2 | 3 | 4 | 5;
-
-export type SaveSlotGroup =
-  | 'chapter-1'
-  | 'chapter-2'
-  | 'chapters-3-5'
-  | 'active-workspace';
-
-export type SlotBadgeKind =
-  | 'Spine'
-  | 'Point of No Return'
-  | 'Clean Fork'
-  | 'Chaos Fork'
-  | 'Rolling FIFO'
-  | 'Safety Lock';
-
 export type EndingId = 'e1' | 'e2' | 'e3' | 'e4' | 'e5' | 'e6' | 'e7' | 'e8';
 
 export type EndingTier = 'best' | 'good' | 'bad' | 'worst';
 
-export interface SaveSlotGroupMeta {
-  id: SaveSlotGroup;
-  title: string;
-  subtitle: string;
-  chapters: ChapterNumber[];
-}
-
-export interface SaveSlotItem {
-  id: string;
-  slotLabel: string;
-  slotNumbers: number[];
-  group: SaveSlotGroup;
-  chapter: ChapterNumber | 'all';
-  chapterLabel: string;
-  title: string;
-  badge: SlotBadgeKind;
-  isAnchor?: boolean;
-  whenToSave: string;
-  whyItMatters: string;
-  spoilerContext: string;
-  recommendedEndings: EndingId[];
-}
-
-export type BranchPathFilter =
+export type StoryPathFilter =
   | 'all'
-  | 'clean-run'
-  | 'chaos-run'
-  | 'safety-loop';
+  | 'route-a'
+  | 'route-b'
+  | 'clean-vs-chaos';
 
-export type BranchLane = 'spine' | 'clean' | 'chaos' | 'safety';
+export type ProfileSubFilter = 'both' | 'clean' | 'chaos';
 
-export interface BranchNode {
+export type StoryNodeKind =
+  | 'root'
+  | 'route'
+  | 'choice'
+  | 'stat-gate'
+  | 'standoff'
+  | 'ending';
+
+export type StoryLane = 'root' | 'route-a' | 'route-b' | 'clean' | 'chaos';
+
+export type StoryProfileAffinity = 'neutral' | 'clean' | 'chaos' | 'both';
+
+export interface StoryTreeNode {
   id: string;
-  slotId: string;
-  label: string;
-  shortTitle: string;
-  subtitle: string;
-  chapter: ChapterNumber | 'all';
-  lane: BranchLane;
-  isAnchor: boolean;
-  gridCol: 1 | 2;
-  gridRow: number;
-  paths: BranchPathFilter[];
-  mobileBranchTag: string;
-  endingIds: EndingId[];
-}
-
-export interface SafetyRailNode {
-  id: string;
-  slotId: string;
-  label: string;
-  shortTitle: string;
-  subtitle: string;
-  ruleTag: string;
-  paths: BranchPathFilter[];
-}
-
-export interface EndingClusterNode {
-  id: 'route-a-endings' | 'route-b-endings';
+  kind: StoryNodeKind;
   title: string;
   subtitle: string;
-  lane: 'clean' | 'chaos';
-  gridCol: 1 | 2;
-  gridRow: number;
-  endingIds: EndingId[];
-  paths: BranchPathFilter[];
+  stageLabel: string;
+  unlockCondition: string;
+  requirements: string[];
+  spoilerContext: string;
+  note?: string;
+  lane: StoryLane;
+  desktopGrid: {
+    colStart: number;
+    colSpan: number;
+    row: number;
+  };
+  mobileDepth: number;
+  filters: StoryPathFilter[];
+  profileAffinity: StoryProfileAffinity;
+  endingId?: EndingId;
+  reachableEndings: EndingId[];
 }
 
-export type EdgeRouteStyle =
-  | 'vertical-trunk'
-  | 'fork-curve-right'
-  | 'fork-curve-long';
-
-export interface BranchEdge {
+export interface StoryTreeEdge {
   id: string;
   from: string;
   to: string;
-  kind: 'spine' | 'clean' | 'chaos';
-  routeStyle: EdgeRouteStyle;
-  paths: BranchPathFilter[];
+  conditionLabel: string;
+  pathSummary: string;
+  tone: 'neutral' | 'route-a' | 'route-b' | 'clean' | 'chaos';
+  routeHint?: 'default' | 'long-right-converge' | 'short-left-converge';
+  filters: StoryPathFilter[];
+  profileAffinity: StoryProfileAffinity;
+}
+
+export interface StoryFilterOption {
+  id: StoryPathFilter;
+  label: string;
+  description: string;
 }
 
 export type RelationshipRoute = 'route-a' | 'route-b';
@@ -129,7 +92,7 @@ export interface EndingDefinition {
   tier: EndingTier;
   route: RelationshipRoute;
   recipeTags: string[];
-  recommendedSlotId: string;
+  unlockSteps: string[];
   spoilerSummary: string;
   bonusEpilogueNote?: string;
   launchWeekNote?: string;
@@ -149,9 +112,7 @@ export interface EndingResolution {
 
 export interface PersistedAppState {
   version: 1;
-  checkedSlots: string[];
   completedEndings: string[];
-  currentChapter: 1 | 2 | 3 | 4 | 5;
 }
 
-export type AppTab = 'save-tracker' | 'branch-tree' | 'ending-nav';
+export type AppTab = 'story-tree' | 'ending-nav';

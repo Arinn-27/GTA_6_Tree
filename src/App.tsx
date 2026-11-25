@@ -1,14 +1,12 @@
 import { useState } from 'react';
-import { BranchTreeTab } from './components/BranchTreeTab';
 import { EndingNavTab } from './components/EndingNavTab';
 import { Footer } from './components/Footer';
 import { GuideSection } from './components/GuideSection';
 import { Header } from './components/Header';
 import { HeroBanner } from './components/HeroBanner';
-import { SaveTrackerTab } from './components/SaveTrackerTab';
+import { StoryTreeTab } from './components/StoryTreeTab';
 import { SyncModal } from './components/SyncModal';
 import { ENDINGS, getEndingById } from './data/endings';
-import { SAVE_SLOTS } from './data/saveSlots';
 import { usePersistedState } from './hooks/usePersistedState';
 import type { AppTab, EndingId, EndingSimulationInput } from './types/tracker';
 
@@ -22,25 +20,18 @@ const INITIAL_SIMULATOR_INPUT: EndingSimulationInput = {
 };
 
 export function App() {
-  const {
-    state,
-    toggleSlot,
-    toggleEnding,
-    setCurrentChapter,
-    replaceState,
-    resetState,
-  } = usePersistedState();
+  const { state, toggleEnding, replaceState, resetState } = usePersistedState();
 
-  const [activeTab, setActiveTab] = useState<AppTab>('save-tracker');
-  const [selectedNodeId, setSelectedNodeId] = useState<string>('slot-8');
+  const [activeTab, setActiveTab] = useState<AppTab>('story-tree');
+  const [focusedNodeId, setFocusedNodeId] = useState<string | null>(null);
   const [simulatorInput, setSimulatorInput] = useState<EndingSimulationInput>(
     INITIAL_SIMULATOR_INPUT
   );
   const [syncOpen, setSyncOpen] = useState(false);
 
-  const handleViewSlotInTree = (slotId: string) => {
-    setSelectedNodeId(slotId);
-    setActiveTab('branch-tree');
+  const handleViewEndingInTree = (endingId: EndingId) => {
+    setFocusedNodeId(endingId);
+    setActiveTab('story-tree');
     const el = document.getElementById('workspace-root');
     el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
@@ -58,8 +49,6 @@ export function App() {
       <Header
         activeTab={activeTab}
         onSelectTab={setActiveTab}
-        checkedSlotsCount={state.checkedSlots.length}
-        totalCheckpoints={SAVE_SLOTS.length}
         completedEndingsCount={state.completedEndings.length}
         totalEndings={ENDINGS.length}
         onOpenSync={() => setSyncOpen(true)}
@@ -68,34 +57,20 @@ export function App() {
       <HeroBanner
         activeTab={activeTab}
         onSelectTab={setActiveTab}
-        checkedSlotsCount={state.checkedSlots.length}
-        totalCheckpoints={SAVE_SLOTS.length}
-        completedEndingsCount={state.completedEndings.length}
+        completedEndings={state.completedEndings}
         totalEndings={ENDINGS.length}
-        currentChapter={state.currentChapter}
       />
 
       <main
         id="workspace-root"
-        className="mx-auto w-full max-w-6xl flex-1 scroll-mt-20 px-4 py-8 sm:px-6 sm:py-10"
+        className="mx-auto w-full max-w-7xl flex-1 scroll-mt-20 px-4 py-8 sm:px-6 sm:py-10"
       >
-        {activeTab === 'save-tracker' && (
-          <SaveTrackerTab
-            checkedSlots={state.checkedSlots}
-            currentChapter={state.currentChapter}
-            onToggleSlot={toggleSlot}
-            onChangeChapter={setCurrentChapter}
-            onViewInTree={handleViewSlotInTree}
-          />
-        )}
-
-        {activeTab === 'branch-tree' && (
-          <BranchTreeTab
-            checkedSlots={state.checkedSlots}
+        {activeTab === 'story-tree' && (
+          <StoryTreeTab
             completedEndings={state.completedEndings}
-            selectedNodeId={selectedNodeId}
-            onSelectNode={setSelectedNodeId}
-            onToggleSlot={toggleSlot}
+            onToggleEnding={toggleEnding}
+            focusedNodeId={focusedNodeId}
+            onClearFocusedNode={() => setFocusedNodeId(null)}
             onInspectEnding={handleInspectEnding}
           />
         )}
@@ -106,7 +81,7 @@ export function App() {
             onToggleEnding={toggleEnding}
             simulatorInput={simulatorInput}
             onChangeSimulatorInput={setSimulatorInput}
-            onViewSlotInTree={handleViewSlotInTree}
+            onViewEndingInTree={handleViewEndingInTree}
           />
         )}
 

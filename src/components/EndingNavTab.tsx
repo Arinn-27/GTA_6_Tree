@@ -3,14 +3,15 @@ import {
   AlertTriangle,
   Award,
   CheckCircle2,
+  ChevronDown,
   Circle,
   Compass,
+  GitBranch,
   Play,
   RotateCcw,
   Sparkles,
 } from 'lucide-react';
 import { ENDINGS, resolveEnding } from '../data/endings';
-import { getSlotById } from '../data/saveSlots';
 import type {
   CriminalProfile,
   EndingDefinition,
@@ -30,7 +31,7 @@ interface EndingNavTabProps {
   onToggleEnding: (endingId: string) => void;
   simulatorInput: EndingSimulationInput;
   onChangeSimulatorInput: (next: EndingSimulationInput) => void;
-  onViewSlotInTree: (slotId: string) => void;
+  onViewEndingInTree: (endingId: EndingId) => void;
 }
 
 type EndingFilter =
@@ -88,9 +89,12 @@ export function EndingNavTab({
   onToggleEnding,
   simulatorInput,
   onChangeSimulatorInput,
-  onViewSlotInTree,
+  onViewEndingInTree,
 }: EndingNavTabProps) {
   const [filter, setFilter] = useState<EndingFilter>('all');
+  const [expandedCardIds, setExpandedCardIds] = useState<Set<EndingId>>(
+    () => new Set(['e1'])
+  );
 
   const completedSet = useMemo(
     () => new Set(completedEndings),
@@ -101,6 +105,18 @@ export function EndingNavTab({
     () => resolveEnding(simulatorInput),
     [simulatorInput]
   );
+
+  const toggleCardExpanded = (id: EndingId) => {
+    setExpandedCardIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
 
   const updateRoute = (route: RelationshipRoute) => {
     const nextBase: EndingSimulationInput = { ...simulatorInput, route };
@@ -235,10 +251,6 @@ export function EndingNavTab({
     el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
-  const recommendedSlot = resolution.ending
-    ? getSlotById(resolution.ending.recommendedSlotId)
-    : undefined;
-
   return (
     <div className="space-y-12">
       {/* Constrained Branch Simulator */}
@@ -259,8 +271,9 @@ export function EndingNavTab({
               </h2>
             </div>
             <p className="mt-1 text-xs leading-relaxed text-slate-400 sm:text-sm">
-              Choose your campaign world state and finale decisions. Unavailable
-              downstream steps constrain automatically.
+              Test your Relationship Route, Criminal Profile, BuckMe! savings,
+              and Protective Custody choices. Downstream steps constrain
+              automatically.
             </p>
           </div>
 
@@ -280,7 +293,7 @@ export function EndingNavTab({
             {/* Step 1 */}
             <div className="surface-card space-y-4 rounded-2xl border border-white/[0.08] p-5">
               <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-cyan-300">
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-cyan-500/15 font-mono text-[11px] text-cyan-200">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-cyan-500/15 font-mono text-[11px] tabular-nums text-cyan-200">
                   1
                 </span>
                 Campaign World State
@@ -288,13 +301,13 @@ export function EndingNavTab({
 
               <div className="space-y-2">
                 <div className="text-xs font-medium text-slate-400">
-                  Relationship Route
+                  Relationship Route (Ch. 1–5)
                 </div>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                   {(
                     [
-                      ['route-a', 'Route A (High Bond)'],
-                      ['route-b', 'Route B (Strained)'],
+                      ['route-a', 'Route A (Strong Relationship)'],
+                      ['route-b', 'Route B (Low / Break Up)'],
                     ] as const
                   ).map(([value, label]) => {
                     const active = simulatorInput.route === value;
@@ -332,11 +345,11 @@ export function EndingNavTab({
                 <div className="text-xs font-medium text-slate-400">
                   Criminal Profile
                 </div>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                   {(
                     [
                       ['clean', 'Clean (Professional)'],
-                      ['chaos', 'Chaos (Psycho / Shattered)'],
+                      ['chaos', 'Chaos (Violent / Psycho)'],
                     ] as const
                   ).map(([value, label]) => {
                     const active = simulatorInput.profile === value;
@@ -372,7 +385,7 @@ export function EndingNavTab({
 
               <div className="space-y-2">
                 <div className="text-xs font-medium text-slate-400">
-                  Family Savings
+                  BuckMe! Family Savings
                 </div>
                 <div className="grid grid-cols-3 gap-2">
                   {(
@@ -406,10 +419,10 @@ export function EndingNavTab({
             {/* Step 2 */}
             <div className="surface-card space-y-3 rounded-2xl border border-white/[0.08] p-5">
               <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-cyan-300">
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-cyan-500/15 font-mono text-[11px] text-cyan-200">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-cyan-500/15 font-mono text-[11px] tabular-nums text-cyan-200">
                   2
                 </span>
-                Pivotal Confrontation
+                Protective Custody Confrontation
               </div>
               <div className="grid grid-cols-2 gap-2">
                 {(
@@ -447,10 +460,10 @@ export function EndingNavTab({
             <div className="surface-card space-y-3 rounded-2xl border border-white/[0.08] p-5">
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-cyan-300">
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-cyan-500/15 font-mono text-[11px] text-cyan-200">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-cyan-500/15 font-mono text-[11px] tabular-nums text-cyan-200">
                     3
                   </span>
-                  Branch Decision
+                  Final Branch Prompt
                 </div>
                 {resolution.availableStep3Choices.length === 0 && (
                   <span className="rounded-full border border-white/10 bg-white/[0.05] px-2.5 py-0.5 text-[11px] font-semibold text-slate-300">
@@ -500,7 +513,7 @@ export function EndingNavTab({
             {resolution.requiresStep4 && (
               <div className="surface-card space-y-3 rounded-2xl border border-white/[0.08] p-5">
                 <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-cyan-300">
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-cyan-500/15 font-mono text-[11px] text-cyan-200">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-cyan-500/15 font-mono text-[11px] tabular-nums text-cyan-200">
                     4
                   </span>
                   Final Escape Window
@@ -545,8 +558,8 @@ export function EndingNavTab({
             )}
           </div>
 
-          {/* Sticky, Properly-Sized Resolved Outcome Card (No Blank Bottom Void!) */}
-          <div className="min-w-0 lg:col-span-5 lg:sticky lg:top-20">
+          {/* Sticky Resolved Outcome Card */}
+          <div className="min-w-0 lg:sticky lg:top-20 lg:col-span-5">
             {resolution.ending ? (
               <div className="surface-card overflow-hidden rounded-2xl border border-white/[0.12]">
                 <div
@@ -582,33 +595,13 @@ export function EndingNavTab({
                       {resolution.ending.recipeTags.map((tag) => (
                         <span
                           key={tag}
-                          className="rounded-md border border-white/[0.08] bg-white/[0.03] px-2 py-0.5 text-[11px] font-medium text-slate-300"
+                          className="rounded-md border border-white/[0.08] bg-white/[0.03] px-2 py-0.5 text-[11px] font-medium tabular-nums text-slate-300"
                         >
                           {tag}
                         </span>
                       ))}
                     </div>
                   </div>
-
-                  {recommendedSlot && (
-                    <div className="flex items-center justify-between gap-2 rounded-xl border border-white/[0.08] bg-canvas/70 px-3.5 py-3 text-xs">
-                      <div>
-                        <span className="text-slate-400">
-                          Recommended Save:{' '}
-                        </span>
-                        <span className="font-mono font-bold tabular-nums text-cyan-200">
-                          {recommendedSlot.slotLabel}
-                        </span>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => onViewSlotInTree(recommendedSlot.id)}
-                        className="font-semibold text-cyan-300 underline decoration-cyan-400/40 underline-offset-4 hover:text-cyan-200"
-                      >
-                        Show in Tree
-                      </button>
-                    </div>
-                  )}
 
                   {resolution.bonusEpilogueNote && (
                     <div className="flex items-start gap-2 rounded-xl border border-emerald-400/35 bg-emerald-500/10 p-3 text-xs leading-relaxed text-emerald-100">
@@ -637,7 +630,7 @@ export function EndingNavTab({
                     </SpoilerText>
                   </div>
 
-                  <div className="border-t border-white/[0.08] pt-4">
+                  <div className="space-y-2.5 border-t border-white/[0.08] pt-4">
                     <button
                       type="button"
                       onClick={() => onToggleEnding(resolution.ending!.id)}
@@ -659,6 +652,15 @@ export function EndingNavTab({
                         </>
                       )}
                     </button>
+
+                    <button
+                      type="button"
+                      onClick={() => onViewEndingInTree(resolution.ending!.id)}
+                      className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-white/12 bg-white/[0.04] px-4 py-2.5 text-xs font-semibold text-cyan-200 transition hover:border-cyan-400/50 hover:bg-cyan-500/10"
+                    >
+                      <GitBranch className="h-4 w-4 text-cyan-400" />
+                      View {resolution.ending.code} in Decision Tree
+                    </button>
                   </div>
                 </div>
               </div>
@@ -672,7 +674,7 @@ export function EndingNavTab({
         </div>
       </section>
 
-      {/* All 8 Endings Filterable Checklist */}
+      {/* All 8 Endings Filterable Checklist with Expandable Recipe Cards */}
       <section aria-labelledby="checklist-heading" className="space-y-5">
         <div className="flex flex-col gap-4 border-b border-white/[0.08] pb-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="space-y-2">
@@ -730,104 +732,157 @@ export function EndingNavTab({
         <div className="grid gap-4 md:grid-cols-2">
           {filteredEndings.map((ending) => {
             const isCompleted = completedSet.has(ending.id);
-            const slot = getSlotById(ending.recommendedSlotId);
+            const isExpanded = expandedCardIds.has(ending.id);
 
             return (
               <article
                 key={ending.id}
-                className={`surface-card flex min-w-0 flex-col justify-between rounded-2xl border p-5 transition ${
+                className={`surface-card flex min-w-0 flex-col justify-between overflow-hidden rounded-2xl border transition ${
                   isCompleted
                     ? 'border-emerald-400/40 bg-emerald-950/15'
                     : 'border-white/[0.08] hover:border-white/[0.18]'
                 }`}
               >
-                <div className="space-y-3.5">
-                  <div className="flex items-start gap-2.5">
-                    <button
-                      type="button"
-                      role="checkbox"
-                      aria-checked={isCompleted}
-                      aria-label={`Mark ${ending.code} ${ending.name} completed`}
-                      onClick={() => onToggleEnding(ending.id)}
-                      className="-ml-2 -mt-2 flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-full text-slate-400 transition hover:text-emerald-300"
-                    >
-                      {isCompleted ? (
-                        <CheckCircle2 className="h-6 w-6 text-emerald-400" />
-                      ) : (
-                        <Circle className="h-6 w-6 text-slate-500" />
-                      )}
-                    </button>
-
-                    <div>
-                      <div className="flex flex-wrap items-center gap-1.5">
-                        <span className="rounded-md border border-white/15 bg-canvas px-2 py-0.5 font-mono text-xs font-bold tabular-nums text-white">
-                          {ending.code}
-                        </span>
-                        <span
-                          className={`rounded-md border px-2 py-0.5 text-[11px] font-bold ${tierBadgeClass(
-                            ending.tier
-                          )}`}
+                <div
+                  className={`h-1 w-full bg-gradient-to-r ${tierAccentBarClass(
+                    ending.tier
+                  )}`}
+                />
+                <div className="flex flex-1 flex-col justify-between p-5">
+                  <div className="space-y-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-start gap-2.5">
+                        <button
+                          type="button"
+                          role="checkbox"
+                          aria-checked={isCompleted}
+                          aria-label={`Mark ${ending.code} ${ending.name} completed`}
+                          onClick={() => onToggleEnding(ending.id)}
+                          className="-ml-2 -mt-2 flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-full text-slate-400 transition hover:text-emerald-300"
                         >
-                          {ending.tierLabel}
-                        </span>
-                        {slot && (
-                          <span className="rounded-md bg-cyan-500/12 px-2 py-0.5 font-mono text-[11px] font-semibold tabular-nums text-cyan-200">
-                            {slot.slotLabel}
-                          </span>
-                        )}
+                          {isCompleted ? (
+                            <CheckCircle2 className="h-6 w-6 text-emerald-400" />
+                          ) : (
+                            <Circle className="h-6 w-6 text-slate-500" />
+                          )}
+                        </button>
+
+                        <div>
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <span className="rounded-md border border-white/15 bg-canvas px-2 py-0.5 font-mono text-xs font-bold tabular-nums text-white">
+                              {ending.code}
+                            </span>
+                            <span
+                              className={`rounded-md border px-2 py-0.5 text-[11px] font-bold ${tierBadgeClass(
+                                ending.tier
+                              )}`}
+                            >
+                              {ending.tierLabel}
+                            </span>
+                            <span className="rounded-md border border-white/10 bg-white/[0.04] px-2 py-0.5 text-[10px] font-semibold text-slate-300">
+                              {ending.route === 'route-a' ? 'Route A' : 'Route B'}
+                            </span>
+                          </div>
+                          <h3 className="mt-1.5 font-display text-base font-bold text-white">
+                            {ending.name}
+                          </h3>
+                        </div>
                       </div>
-                      <h3 className="mt-1.5 font-display text-base font-bold text-white">
-                        {ending.name}
-                      </h3>
+
+                      <button
+                        type="button"
+                        aria-expanded={isExpanded}
+                        aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${ending.code} unlock recipe`}
+                        onClick={() => toggleCardExpanded(ending.id)}
+                        className="inline-flex min-h-11 shrink-0 items-center gap-1 rounded-xl border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[11px] font-semibold text-slate-300 transition hover:border-cyan-400/50 hover:text-white"
+                      >
+                        <span>Recipe</span>
+                        <ChevronDown
+                          className={`h-3.5 w-3.5 transition-transform duration-200 ${
+                            isExpanded ? 'rotate-180 text-cyan-300' : ''
+                          }`}
+                        />
+                      </button>
+                    </div>
+
+                    <div className="flex flex-wrap gap-1.5">
+                      {ending.recipeTags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="rounded-md border border-white/[0.07] bg-white/[0.03] px-2 py-0.5 text-[11px] tabular-nums text-slate-300"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+
+                    {ending.launchWeekNote && !isExpanded && (
+                      <div className="inline-flex items-center gap-1.5 rounded-lg border border-amber-400/30 bg-amber-500/10 px-2.5 py-1 text-[11px] font-medium text-amber-200">
+                        <AlertTriangle className="h-3.5 w-3.5 shrink-0 text-amber-300" />
+                        Launch-week verification note inside recipe
+                      </div>
+                    )}
+
+                    {/* Expandable Recipe & Notes Panel */}
+                    <div className="collapsible-panel" data-open={isExpanded}>
+                      <div>
+                        <div className="space-y-3 border-t border-white/[0.07] pt-3">
+                          <div className="rounded-xl border border-white/[0.07] bg-canvas/70 p-3.5">
+                            <div className="text-[11px] font-bold uppercase tracking-wider text-cyan-300">
+                              Unlock Recipe
+                            </div>
+                            <ol className="mt-2 space-y-1.5 text-xs leading-relaxed text-slate-200">
+                              {ending.unlockSteps.map((step, idx) => (
+                                <li key={step} className="flex items-start gap-2">
+                                  <span className="mt-0.5 font-mono text-[11px] font-bold tabular-nums text-cyan-400">
+                                    {idx + 1}.
+                                  </span>
+                                  <span>{step}</span>
+                                </li>
+                              ))}
+                            </ol>
+                          </div>
+
+                          {ending.bonusEpilogueNote && (
+                            <p className="rounded-xl border border-emerald-400/25 bg-emerald-500/10 px-3 py-2 text-xs leading-relaxed text-emerald-100">
+                              {ending.bonusEpilogueNote}
+                            </p>
+                          )}
+
+                          {ending.launchWeekNote && (
+                            <p className="rounded-xl border border-amber-400/25 bg-amber-500/10 px-3 py-2 text-xs leading-relaxed text-amber-100">
+                              {ending.launchWeekNote}
+                            </p>
+                          )}
+
+                          <div>
+                            <SpoilerText label={`${ending.code} ending outcome`}>
+                              {ending.spoilerSummary}
+                            </SpoilerText>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
-                  <div className="flex flex-wrap gap-1.5">
-                    {ending.recipeTags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="rounded-md border border-white/[0.07] bg-white/[0.03] px-2 py-0.5 text-[11px] text-slate-300"
-                      >
-                        {tag}
-                      </span>
-                    ))}
+                  <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-white/[0.07] pt-3.5">
+                    <button
+                      type="button"
+                      onClick={() => onViewEndingInTree(ending.id)}
+                      className="inline-flex min-h-11 items-center gap-1.5 text-xs font-semibold text-slate-300 transition hover:text-cyan-200"
+                    >
+                      <GitBranch className="h-3.5 w-3.5 text-cyan-400" />
+                      View in Story Tree
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => loadEndingInSimulator(ending)}
+                      className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-1.5 text-xs font-semibold text-cyan-200 transition hover:border-cyan-400/50 hover:bg-cyan-500/10"
+                    >
+                      <Play className="h-3 w-3 text-cyan-400" />
+                      Simulate Path
+                    </button>
                   </div>
-
-                  {ending.bonusEpilogueNote && (
-                    <p className="rounded-xl border border-emerald-400/25 bg-emerald-500/10 px-3 py-2 text-xs text-emerald-100">
-                      {ending.bonusEpilogueNote}
-                    </p>
-                  )}
-
-                  {ending.launchWeekNote && (
-                    <p className="rounded-xl border border-amber-400/25 bg-amber-500/10 px-3 py-2 text-xs text-amber-100">
-                      {ending.launchWeekNote}
-                    </p>
-                  )}
-
-                  <div>
-                    <SpoilerText label={`${ending.code} ending outcome`}>
-                      {ending.spoilerSummary}
-                    </SpoilerText>
-                  </div>
-                </div>
-
-                <div className="mt-4 flex items-center justify-between gap-2 border-t border-white/[0.07] pt-3.5">
-                  <button
-                    type="button"
-                    onClick={() => onViewSlotInTree(ending.recommendedSlotId)}
-                    className="min-h-11 text-xs font-medium tabular-nums text-slate-400 transition hover:text-cyan-200"
-                  >
-                    Inspect {slot?.slotLabel ?? 'Save Slot'}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => loadEndingInSimulator(ending)}
-                    className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-1.5 text-xs font-semibold text-cyan-200 transition hover:border-cyan-400/50 hover:bg-cyan-500/10"
-                  >
-                    <Play className="h-3 w-3 text-cyan-400" />
-                    Simulate Path
-                  </button>
                 </div>
               </article>
             );

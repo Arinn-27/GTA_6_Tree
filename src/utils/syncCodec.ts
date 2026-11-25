@@ -1,28 +1,21 @@
 import { VALID_ENDING_IDS } from '../data/endings';
-import { VALID_SLOT_IDS } from '../data/saveSlots';
-import type { ChapterNumber, PersistedAppState } from '../types/tracker';
+import type { PersistedAppState } from '../types/tracker';
 
 export const MAX_SYNC_CODE_LENGTH = 8192;
 
 export const DEFAULT_APP_STATE: PersistedAppState = {
   version: 1,
-  checkedSlots: [],
   completedEndings: [],
-  currentChapter: 1,
 };
+
+const ALLOWED_STATE_KEYS: ReadonlySet<string> = new Set([
+  'version',
+  'completedEndings',
+]);
 
 export type StateValidationResult =
   | { ok: true; state: PersistedAppState }
   | { ok: false; error: string };
-
-function isValidChapter(value: unknown): value is ChapterNumber {
-  return (
-    typeof value === 'number' &&
-    Number.isInteger(value) &&
-    value >= 1 &&
-    value <= 5
-  );
-}
 
 function validateIdArray(
   value: unknown,
@@ -71,6 +64,15 @@ export function validatePersistedState(raw: unknown): StateValidationResult {
 
   const record = raw as Record<string, unknown>;
 
+  for (const key of Object.keys(record)) {
+    if (!ALLOWED_STATE_KEYS.has(key)) {
+      return {
+        ok: false,
+        error: `Unexpected backup field "${key}": expected only version and completedEndings.`,
+      };
+    }
+  }
+
   if (record.version !== 1) {
     const found =
       record.version === undefined ? 'missing' : String(record.version);
@@ -78,22 +80,6 @@ export function validatePersistedState(raw: unknown): StateValidationResult {
       ok: false,
       error: `Unsupported backup schema version (${found}). Expected version 1.`,
     };
-  }
-
-  if (!isValidChapter(record.currentChapter)) {
-    return {
-      ok: false,
-      error: 'Invalid currentChapter: expected an integer between 1 and 5.',
-    };
-  }
-
-  const slotsCheck = validateIdArray(
-    record.checkedSlots,
-    VALID_SLOT_IDS,
-    'checkedSlots'
-  );
-  if (!slotsCheck.ok) {
-    return slotsCheck;
   }
 
   const endingsCheck = validateIdArray(
@@ -109,9 +95,7 @@ export function validatePersistedState(raw: unknown): StateValidationResult {
     ok: true,
     state: {
       version: 1,
-      checkedSlots: slotsCheck.ids,
       completedEndings: endingsCheck.ids,
-      currentChapter: record.currentChapter,
     },
   };
 }

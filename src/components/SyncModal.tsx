@@ -9,6 +9,7 @@ import {
   Upload,
   X,
 } from 'lucide-react';
+import { ENDINGS } from '../data/endings';
 import type { PersistedAppState } from '../types/tracker';
 import { decodeSyncCode, encodeSyncCode } from '../utils/syncCodec';
 
@@ -72,7 +73,6 @@ export function SyncModal({
       setCopied(true);
       window.setTimeout(() => setCopied(false), 2000);
     } catch {
-      // Fallback selection copy if clipboard permissions are blocked.
       const input = document.getElementById(
         'sync-export-textarea'
       ) as HTMLTextAreaElement | null;
@@ -100,18 +100,18 @@ export function SyncModal({
       role="dialog"
       aria-modal="true"
       aria-labelledby="sync-modal-title"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 p-4 backdrop-blur-md"
       onClick={onClose}
     >
       <div
-        className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-border-subtle bg-surface-elevated p-5 shadow-2xl sm:p-6"
+        className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-2xl border border-white/15 bg-[#101626] p-5 shadow-2xl sm:p-6"
         onClick={(event) => event.stopPropagation()}
       >
         <div className="flex items-start justify-between gap-3">
           <div>
             <h2
               id="sync-modal-title"
-              className="text-lg font-bold text-white"
+              className="font-display text-lg font-bold text-white"
             >
               Backup &amp; Cross-Device Sync
             </h2>
@@ -123,14 +123,14 @@ export function SyncModal({
             type="button"
             onClick={onClose}
             aria-label="Close sync modal"
-            className="rounded-lg p-1.5 text-slate-400 transition hover:bg-slate-800 hover:text-white"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-xl text-slate-400 transition hover:bg-white/[0.06] hover:text-white"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Export Section */}
-        <section className="mt-5 space-y-2.5 rounded-xl border border-border-subtle bg-surface p-4">
+        <section className="mt-5 space-y-2.5 rounded-xl border border-white/[0.08] bg-surface p-4">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 text-sm font-semibold text-cyan-200">
               <Upload className="h-4 w-4 text-cyan-400" />
@@ -139,7 +139,7 @@ export function SyncModal({
             <button
               type="button"
               onClick={handleCopy}
-              className="inline-flex items-center gap-1.5 rounded-lg bg-cyan-500/15 px-3 py-1.5 text-xs font-semibold text-cyan-200 ring-1 ring-cyan-400/40 transition hover:bg-cyan-500/25"
+              className="inline-flex min-h-11 items-center gap-1.5 rounded-xl bg-cyan-500/15 px-3.5 py-1.5 text-xs font-semibold text-cyan-200 ring-1 ring-cyan-400/40 transition hover:bg-cyan-500/25 sm:min-h-9"
             >
               {copied ? (
                 <>
@@ -160,17 +160,16 @@ export function SyncModal({
             value={exportCode}
             rows={3}
             aria-label="Exported Base64 sync code"
-            className="w-full resize-none rounded-lg border border-slate-800 bg-canvas px-3 py-2 font-mono text-xs text-slate-300 focus:outline-none"
+            className="w-full resize-none rounded-lg border border-white/[0.08] bg-canvas px-3 py-2 font-mono text-xs text-slate-300 focus:outline-none"
           />
-          <p className="text-[11px] text-slate-400">
-            Includes {state.checkedSlots.length}/12 checkpoints,{' '}
-            {state.completedEndings.length}/8 endings, and Chapter{' '}
-            {state.currentChapter}. Spoiler reveal state is never exported.
+          <p className="text-[11px] tabular-nums text-slate-400">
+            Includes {state.completedEndings.length}/{ENDINGS.length} completed
+            endings. Spoiler reveal state is never exported.
           </p>
         </section>
 
         {/* Import Section */}
-        <section className="mt-4 space-y-2.5 rounded-xl border border-border-subtle bg-surface p-4">
+        <section className="mt-4 space-y-2.5 rounded-xl border border-white/[0.08] bg-surface p-4">
           <div className="flex items-center gap-2 text-sm font-semibold text-slate-100">
             <Download className="h-4 w-4 text-emerald-400" />
             Import Sync Code
@@ -184,11 +183,14 @@ export function SyncModal({
             placeholder="Paste a Base64 sync code from another device..."
             rows={3}
             aria-label="Paste Base64 sync code to import"
-            className="w-full resize-none rounded-lg border border-slate-700 bg-canvas px-3 py-2 font-mono text-xs text-slate-100 placeholder:text-slate-500 focus:border-cyan-400 focus:outline-none"
+            className="w-full resize-none rounded-lg border border-white/15 bg-canvas px-3 py-2 font-mono text-xs text-slate-100 placeholder:text-slate-500 focus:border-cyan-400 focus:outline-none"
           />
 
           {decodedPreview && !decodedPreview.ok && (
-            <div className="flex items-start gap-2 rounded-lg border border-rose-500/40 bg-rose-500/10 p-2.5 text-xs text-rose-200">
+            <div
+              role="alert"
+              className="flex items-start gap-2 rounded-lg border border-rose-500/40 bg-rose-500/10 p-2.5 text-xs text-rose-200"
+            >
               <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-rose-400" />
               <span>{decodedPreview.error}</span>
             </div>
@@ -196,18 +198,17 @@ export function SyncModal({
 
           {decodedPreview && decodedPreview.ok && (
             <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-emerald-500/40 bg-emerald-500/10 p-2.5 text-xs text-emerald-200">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 tabular-nums">
                 <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" />
                 <span>
-                  Valid backup: {decodedPreview.state.checkedSlots.length}/12
-                  slots · {decodedPreview.state.completedEndings.length}/8
-                  endings · Ch. {decodedPreview.state.currentChapter}
+                  Valid backup: {decodedPreview.state.completedEndings.length}/
+                  {ENDINGS.length} completed endings
                 </span>
               </div>
               <button
                 type="button"
                 onClick={handleApplyImport}
-                className="rounded-md bg-emerald-500 px-3 py-1 text-xs font-semibold text-slate-950 transition hover:bg-emerald-400"
+                className="min-h-11 rounded-lg bg-emerald-500 px-3.5 py-1.5 text-xs font-semibold text-slate-950 transition hover:bg-emerald-400 sm:min-h-9"
               >
                 Apply Backup
               </button>
@@ -225,13 +226,13 @@ export function SyncModal({
         <section className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-rose-500/25 bg-rose-950/20 p-4">
           <div className="text-xs text-slate-300">
             <span className="font-semibold text-rose-200">Reset Progress:</span>{' '}
-            Clears saved checkpoints, endings, and current chapter locally.
+            Clears your completed endings locally.
           </div>
           {!confirmReset ? (
             <button
               type="button"
               onClick={() => setConfirmReset(true)}
-              className="inline-flex items-center gap-1.5 rounded-lg border border-rose-500/40 bg-rose-500/10 px-3 py-1.5 text-xs font-semibold text-rose-200 transition hover:bg-rose-500/20"
+              className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-rose-500/40 bg-rose-500/10 px-3.5 py-1.5 text-xs font-semibold text-rose-200 transition hover:bg-rose-500/20 sm:min-h-9"
             >
               <RotateCcw className="h-3.5 w-3.5" />
               Reset Local Data
@@ -241,7 +242,7 @@ export function SyncModal({
               <button
                 type="button"
                 onClick={() => setConfirmReset(false)}
-                className="rounded-lg border border-slate-700 bg-slate-900 px-2.5 py-1.5 text-xs font-medium text-slate-300 hover:bg-slate-800"
+                className="min-h-11 rounded-xl border border-slate-700 bg-slate-900 px-3 py-1.5 text-xs font-medium text-slate-300 hover:bg-slate-800 sm:min-h-9"
               >
                 Cancel
               </button>
@@ -251,7 +252,7 @@ export function SyncModal({
                   onResetState();
                   setConfirmReset(false);
                 }}
-                className="rounded-lg bg-rose-500 px-3 py-1.5 text-xs font-semibold text-white hover:bg-rose-400"
+                className="min-h-11 rounded-xl bg-rose-500 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-rose-400 sm:min-h-9"
               >
                 Confirm Reset
               </button>

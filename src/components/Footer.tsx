@@ -33,7 +33,7 @@ export function Footer({ onSelectTab, onOpenSync }: FooterProps) {
 
   return (
     <footer className="mt-16 border-t border-white/[0.08] bg-[#06080f] pb-12 pt-10">
-      <div className="mx-auto max-w-6xl space-y-10 px-4 sm:px-6">
+      <div className="mx-auto max-w-7xl space-y-10 px-4 sm:px-6">
         {/* Subtle, CLS-safe AdSense placement */}
         <div
           aria-label="Advertisement slot placeholder"
@@ -67,15 +67,15 @@ export function Footer({ onSelectTab, onOpenSync }: FooterProps) {
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
-                    d="M6 16h8l6-7h6M14 16l6 7h6"
+                    d="M16 6v8l-7 6v6M16 14l7 6v6"
                     stroke="#22d3ee"
                     strokeWidth="2.5"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
-                  <circle cx="6" cy="16" r="2.6" fill="#22d3ee" />
-                  <circle cx="26" cy="9" r="2.6" fill="#34d399" />
-                  <circle cx="26" cy="23" r="2.6" fill="#fb7185" />
+                  <circle cx="16" cy="6" r="2.6" fill="#22d3ee" />
+                  <circle cx="9" cy="26" r="2.6" fill="#34d399" />
+                  <circle cx="23" cy="26" r="2.6" fill="#fb7185" />
                 </svg>
               </span>
               <span className="font-display text-base font-bold text-white">
@@ -83,16 +83,16 @@ export function Footer({ onSelectTab, onOpenSync }: FooterProps) {
               </span>
             </div>
             <p className="max-w-sm text-xs leading-relaxed text-slate-400">
-              A spoiler-free 15-slot save planner and deterministic 8-ending
-              branch navigator built to keep your campaign organized without
-              ruining story moments.
+              A spoiler-free GTA 6 story decision tree and deterministic
+              8-ending branch navigator built to trace every choice, stat gate,
+              and outcome cleanly.
             </p>
             <div className="pt-1">
               <a
                 href={SUPPORT_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex min-h-10 items-center gap-1.5 rounded-lg border border-rose-400/25 bg-rose-500/10 px-3 py-1.5 text-xs font-semibold text-rose-200 transition hover:border-rose-400/50 hover:bg-rose-500/20"
+                className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-rose-400/25 bg-rose-500/10 px-3 py-1.5 text-xs font-semibold text-rose-200 transition hover:border-rose-400/50 hover:bg-rose-500/20"
               >
                 <Coffee className="h-3.5 w-3.5 text-rose-300" />
                 {SUPPORT_LABEL}
@@ -109,19 +109,10 @@ export function Footer({ onSelectTab, onOpenSync }: FooterProps) {
               <li>
                 <button
                   type="button"
-                  onClick={() => jumpToTab('save-tracker')}
+                  onClick={() => jumpToTab('story-tree')}
                   className="transition hover:text-cyan-200"
                 >
-                  15-Slot Save Tracker
-                </button>
-              </li>
-              <li>
-                <button
-                  type="button"
-                  onClick={() => jumpToTab('branch-tree')}
-                  className="transition hover:text-cyan-200"
-                >
-                  Anchor &amp; Branch Tree
+                  Story Decision Tree
                 </button>
               </li>
               <li>
@@ -130,7 +121,7 @@ export function Footer({ onSelectTab, onOpenSync }: FooterProps) {
                   onClick={() => jumpToTab('ending-nav')}
                   className="transition hover:text-cyan-200"
                 >
-                  8-Ending Simulator
+                  8-Ending Simulator &amp; Checklist
                 </button>
               </li>
               <li>
@@ -155,7 +146,7 @@ export function Footer({ onSelectTab, onOpenSync }: FooterProps) {
               <button
                 type="button"
                 onClick={onOpenSync}
-                className="inline-flex min-h-10 items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs font-medium text-slate-300 transition hover:border-cyan-400/40 hover:text-white"
+                className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs font-medium text-slate-300 transition hover:border-cyan-400/40 hover:text-white"
               >
                 <ArrowLeftRight className="h-3.5 w-3.5 text-cyan-400" />
                 Sync / Backup
@@ -163,7 +154,7 @@ export function Footer({ onSelectTab, onOpenSync }: FooterProps) {
               <button
                 type="button"
                 onClick={() => setModal('privacy')}
-                className="inline-flex min-h-10 items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs font-medium text-slate-300 transition hover:border-white/25 hover:text-white"
+                className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs font-medium text-slate-300 transition hover:border-white/25 hover:text-white"
               >
                 <Shield className="h-3.5 w-3.5 text-cyan-400" />
                 Privacy Policy
@@ -171,14 +162,14 @@ export function Footer({ onSelectTab, onOpenSync }: FooterProps) {
               <button
                 type="button"
                 onClick={() => setModal('about')}
-                className="inline-flex min-h-10 items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs font-medium text-slate-300 transition hover:border-white/25 hover:text-white"
+                className="inline-flex min-h-11 items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs font-medium text-slate-300 transition hover:border-white/25 hover:text-white"
               >
                 <Info className="h-3.5 w-3.5 text-cyan-400" />
                 About
               </button>
             </div>
             <p className="text-[11px] leading-relaxed text-slate-500">
-              Unofficial fan-made save planning tool. Not affiliated with,
+              Unofficial fan-made story branch companion. Not affiliated with,
               endorsed by, or connected to Rockstar Games or Take-Two
               Interactive. Contains zero copyrighted game logos, artwork, or map
               tiles.
@@ -212,7 +203,7 @@ export function Footer({ onSelectTab, onOpenSync }: FooterProps) {
                 type="button"
                 onClick={() => setModal(null)}
                 aria-label="Close modal"
-                className="inline-flex min-h-10 min-w-10 items-center justify-center rounded-lg text-slate-400 transition hover:bg-white/[0.06] hover:text-white"
+                className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg text-slate-400 transition hover:bg-white/[0.06] hover:text-white"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -223,10 +214,13 @@ export function Footer({ onSelectTab, onOpenSync }: FooterProps) {
                 <p>
                   <strong className="text-white">Local-Only Storage:</strong>{' '}
                   This application runs 100% client-side as a static site. Your
-                  checked save slots, completed endings, and current chapter are
-                  stored exclusively in your browser&apos;s{' '}
+                  completed endings are stored exclusively in your browser&apos;s{' '}
                   <code className="rounded bg-canvas px-1.5 py-0.5 text-xs text-cyan-300">
                     localStorage
+                  </code>{' '}
+                  under key{' '}
+                  <code className="rounded bg-canvas px-1.5 py-0.5 text-xs text-cyan-300">
+                    gta6_story_tracker_v1
                   </code>
                   . We do not collect, transmit, or store personal data on any
                   backend server.
@@ -234,7 +228,7 @@ export function Footer({ onSelectTab, onOpenSync }: FooterProps) {
                 <p>
                   <strong className="text-white">Offline Sync Codes:</strong>{' '}
                   Exported sync codes are Base64-encoded snapshots of your
-                  progress JSON generated locally in your browser.
+                  completed endings JSON generated locally in your browser.
                 </p>
                 <p>
                   <strong className="text-white">Advertising Notice:</strong>{' '}
@@ -248,10 +242,10 @@ export function Footer({ onSelectTab, onOpenSync }: FooterProps) {
               <div className="mt-4 space-y-3 text-sm leading-relaxed text-slate-300">
                 <p>
                   <strong className="text-white">ViceBranch</strong> is a
-                  spoiler-free GTA 6 15-slot save tracker and ending branch
-                  navigator built to help players explore all 8 confirmed
-                  endings in a single campaign without accidental autosave
-                  losses.
+                  spoiler-free GTA 6 story decision tree and ending navigator
+                  built to clarify how Relationship standing, Criminal Profile,
+                  BuckMe! savings, and finale choices lead to all 8 confirmed
+                  endings.
                 </p>
                 <p>
                   <strong className="text-white">Spoiler Protection:</strong>{' '}
@@ -263,8 +257,7 @@ export function Footer({ onSelectTab, onOpenSync }: FooterProps) {
                   <strong className="text-white">Launch-Week Notes:</strong>{' '}
                   Certain Route B standoff edge cases (e6 &amp; e7) include
                   verification notes reflecting early launch-week community
-                  testing. Keep Slots 8 and 10 backed up until confirmed on your
-                  patch.
+                  testing.
                 </p>
               </div>
             )}

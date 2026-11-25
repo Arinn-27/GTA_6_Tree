@@ -15,35 +15,29 @@ describe('syncCodec', () => {
     expect(decoded).toEqual({ ok: true, state: DEFAULT_APP_STATE });
   });
 
-  it('round-trips populated progress and tolerates whitespace around pasted codes', () => {
+  it('round-trips populated ending progress and tolerates whitespace around pasted codes', () => {
     const sample: PersistedAppState = {
       version: 1,
-      checkedSlots: ['slot-1', 'slot-8', 'slot-9', 'slots-11-14', 'slot-15'],
       completedEndings: ['e1', 'e3', 'e8'],
-      currentChapter: 5,
     };
 
     const code = encodeSyncCode(sample);
-    const spaced = `  ${code.slice(0, 20)}\n  ${code.slice(20)}  `;
+    const spaced = `  ${code.slice(0, 16)}\n  ${code.slice(16)}  `;
     const decoded = decodeSyncCode(spaced);
     expect(decoded).toEqual({ ok: true, state: sample });
   });
 
-  it('deduplicates repeated valid IDs during validation', () => {
+  it('deduplicates repeated valid ending IDs during validation', () => {
     const result = validatePersistedState({
       version: 1,
-      checkedSlots: ['slot-1', 'slot-1', 'slot-2'],
-      completedEndings: ['e1', 'e1'],
-      currentChapter: 3,
+      completedEndings: ['e1', 'e1', 'e4', 'e8', 'e4'],
     });
 
     expect(result).toEqual({
       ok: true,
       state: {
         version: 1,
-        checkedSlots: ['slot-1', 'slot-2'],
-        completedEndings: ['e1'],
-        currentChapter: 3,
+        completedEndings: ['e1', 'e4', 'e8'],
       },
     });
   });
@@ -55,8 +49,7 @@ describe('syncCodec', () => {
   });
 
   it('rejects wrong or missing schema versions', () => {
-    const encodeRaw = (obj: unknown) =>
-      btoa(JSON.stringify(obj));
+    const encodeRaw = (obj: unknown) => btoa(JSON.stringify(obj));
 
     const v2 = decodeSyncCode(
       encodeRaw({ ...DEFAULT_APP_STATE, version: 2 })
@@ -71,39 +64,36 @@ describe('syncCodec', () => {
     );
     expect(vString.ok).toBe(false);
 
-    const vMissing = decodeSyncCode(
-      encodeRaw({ checkedSlots: [], completedEndings: [], currentChapter: 1 })
-    );
+    const vMissing = decodeSyncCode(encodeRaw({ completedEndings: [] }));
     expect(vMissing.ok).toBe(false);
   });
 
-  it('rejects invalid chapters, unknown IDs, non-object JSON, and oversized inputs', () => {
+  it('rejects legacy/unexpected keys, unknown ending IDs, non-object JSON, and oversized inputs', () => {
     const encodeRaw = (obj: unknown) => btoa(JSON.stringify(obj));
 
     expect(decodeSyncCode(encodeRaw([1, 2, 3])).ok).toBe(false);
     expect(decodeSyncCode(encodeRaw(null)).ok).toBe(false);
 
-    expect(
-      decodeSyncCode(encodeRaw({ ...DEFAULT_APP_STATE, currentChapter: 0 })).ok
-    ).toBe(false);
-    expect(
-      decodeSyncCode(encodeRaw({ ...DEFAULT_APP_STATE, currentChapter: 6 })).ok
-    ).toBe(false);
-    expect(
-      decodeSyncCode(encodeRaw({ ...DEFAULT_APP_STATE, currentChapter: 2.5 }))
-        .ok
-    ).toBe(false);
+    const legacySlots = decodeSyncCode(
+      encodeRaw({
+        version: 1,
+        checkedSlots: ['slot-1'],
+        completedEndings: ['e1'],
+      })
+    );
+    expect(legacySlots.ok).toBe(false);
+    if (!legacySlots.ok) {
+      expect(legacySlots.error).toContain('checkedSlots');
+    }
 
-    expect(
-      decodeSyncCode(
-        encodeRaw({ ...DEFAULT_APP_STATE, checkedSlots: ['slot-999'] })
-      ).ok
-    ).toBe(false);
-    expect(
-      decodeSyncCode(
-        encodeRaw({ ...DEFAULT_APP_STATE, checkedSlots: [123] })
-      ).ok
-    ).toBe(false);
+    const legacyChapter = decodeSyncCode(
+      encodeRaw({
+        version: 1,
+        completedEndings: ['e1'],
+        currentChapter: 3,
+      })
+    );
+    expect(legacyChapter.ok).toBe(false);
 
     expect(
       decodeSyncCode(
@@ -114,6 +104,9 @@ describe('syncCodec', () => {
       decodeSyncCode(
         encodeRaw({ ...DEFAULT_APP_STATE, completedEndings: [null] })
       ).ok
+    ).toBe(false);
+    expect(
+      decodeSyncCode(encodeRaw({ version: 1, completedEndings: 'e1' })).ok
     ).toBe(false);
 
     const oversized = 'A'.repeat(MAX_SYNC_CODE_LENGTH + 4);
