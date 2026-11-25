@@ -53,9 +53,10 @@ export function HeroBanner({
             </h1>
 
             <p className="max-w-xl text-sm leading-relaxed text-slate-300 sm:text-base">
-              Trace how Relationship level, Criminal Profile, BuckMe! savings
-              thresholds, and the Protective Custody timer converge across all 8
-              confirmed endings—and track every outcome locally.
+              Follow the campaign chronologically from Chapter 1 to Chapter 5—see
+              where choices rejoin the spine, where{' '}
+              <span className="font-mono text-xs text-cyan-300">SPLIT ON</span>{' '}
+              stat gates branch, and how all 8 endings converge without spoilers.
             </p>
 
             {/* Primary & Secondary Workspace Switchers */}

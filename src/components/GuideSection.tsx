@@ -63,6 +63,11 @@ interface FaqItem {
 
 const FAQ_ITEMS: readonly FaqItem[] = [
   {
+    question: 'Why do some Chapter 1–4 choices rejoin the main story spine?',
+    answer:
+      'Early and mid-game forks like "Hey Arnold!" (Chapter 1) and "Dubious Provenance" (Chapter 3) let you steer your Relationship Level and Criminal Profile without duplicating the rest of the campaign. Their branches merge cleanly back into the main timeline before Chapter 5 evaluates your SPLIT ON finale gates.',
+  },
+  {
     question: 'What determines Route A vs. Route B in the finale?',
     answer:
       'Your cumulative Relationship Meter across Chapters 1–5 decides the split. Cooperative prep work and supportive dialogue keep you in Route A (Strong Relationship), whereas strained or hostile choices drop you into Route B (Low / Break Up).',

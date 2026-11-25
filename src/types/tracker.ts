@@ -10,29 +10,44 @@ export type StoryPathFilter =
 
 export type ProfileSubFilter = 'both' | 'clean' | 'chaos';
 
-export type StoryNodeKind =
-  | 'root'
-  | 'route'
+export type StoryDagNodeType =
+  | 'chapter'
+  | 'save'
   | 'choice'
-  | 'stat-gate'
-  | 'standoff'
-  | 'ending';
+  | 'condition'
+  | 'outcome';
+
+export type StoryChapterId = 'ch-1' | 'ch-2' | 'ch-3' | 'ch-4' | 'ch-5';
 
 export type StoryLane = 'root' | 'route-a' | 'route-b' | 'clean' | 'chaos';
 
 export type StoryProfileAffinity = 'neutral' | 'clean' | 'chaos' | 'both';
 
-export interface StoryTreeNode {
+export type StoryDagEdgeTone =
+  | 'spine'
+  | 'route-a'
+  | 'route-b'
+  | 'clean'
+  | 'chaos';
+
+export interface StoryDagNode {
   id: string;
-  kind: StoryNodeKind;
+  chapterId: StoryChapterId;
+  nodeType: StoryDagNodeType;
+  chapterNumber?: 1 | 2 | 3 | 4 | 5;
   title: string;
   subtitle: string;
   stageLabel: string;
+  splitVariable?: string;
   unlockCondition: string;
+  impactTags?: string[];
   requirements: string[];
   spoilerContext: string;
   note?: string;
   lane: StoryLane;
+  isCollapsible?: boolean;
+  rejoinTargetId?: string;
+  nextChapterId?: StoryChapterId;
   desktopGrid: {
     colStart: number;
     colSpan: number;
@@ -42,22 +57,29 @@ export interface StoryTreeNode {
   filters: StoryPathFilter[];
   profileAffinity: StoryProfileAffinity;
   endingId?: EndingId;
+  bonusForEndingId?: EndingId;
   reachableEndings: EndingId[];
 }
 
-export interface StoryTreeEdge {
+export interface StoryDagEdge {
   id: string;
   from: string;
   to: string;
   conditionLabel: string;
   pathSummary: string;
-  tone: 'neutral' | 'route-a' | 'route-b' | 'clean' | 'chaos';
-  routeHint?: 'default' | 'long-right-converge' | 'short-left-converge';
+  tone: StoryDagEdgeTone;
+  routeHint?:
+    | 'default'
+    | 'long-right-converge'
+    | 'short-left-converge'
+    | 'lower-left-sweep'
+    | 'rejoin-merge';
+  isBypass?: boolean;
   filters: StoryPathFilter[];
   profileAffinity: StoryProfileAffinity;
 }
 
-export interface StoryFilterOption {
+export interface StoryDagFilterOption {
   id: StoryPathFilter;
   label: string;
   description: string;
